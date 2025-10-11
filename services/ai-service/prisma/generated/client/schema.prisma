@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model PricingLog {
+  id        String   @id @default(cuid())
+  tripId    String
+  inputs    Json
+  price     Int
+  strategy  String
+  createdAt DateTime @default(now())
+}
+
+model PricingConfig {
+  id            String   @id @default(cuid())
+  loadFactorT1  Int      @default(0)
+  loadFactorT2  Int      @default(0)
+  timeBandBoost Int      @default(0)
+  updatedAt     DateTime @updatedAt
+}
