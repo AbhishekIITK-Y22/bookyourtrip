@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Auth Service - install, generate, migrate, build, test
+      - name: Auth Service - install, generate, migrate, build, test, coverage
         working-directory: services/auth-service
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
@@ -34,9 +34,10 @@ jobs:
           npx prisma generate
           npx prisma migrate deploy
           npm run build
-          npm test -- --forceExit
+          npm test -- --coverage -- --forceExit
+          mkdir -p ../../coverage/auth && cp -r coverage/* ../../coverage/auth/
 
-      - name: Booking Service - install, generate, migrate, build, test
+      - name: Booking Service - install, generate, migrate, build, test, coverage
         working-directory: services/booking-service
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
@@ -48,9 +49,10 @@ jobs:
           npx prisma generate
           npx prisma migrate deploy
           npm run build
-          npm test -- --forceExit
+          npm test -- --coverage -- --forceExit
+          mkdir -p ../../coverage/booking && cp -r coverage/* ../../coverage/booking/
 
-      - name: AI Service - install, generate, migrate, build, test
+      - name: AI Service - install, generate, migrate, build, test, coverage
         working-directory: services/ai-service
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
@@ -59,6 +61,13 @@ jobs:
           npx prisma generate
           npx prisma migrate deploy
           npm run build
-          npm test -- --forceExit
+          npm test -- --coverage -- --forceExit
+          mkdir -p ../../coverage/ai && cp -r coverage/* ../../coverage/ai/
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: coverage
 
 
