@@ -65,8 +65,8 @@ describe('AI Service', () => {
       expect(res.status).toBe(201);
       expect(res.body).toHaveProperty('id');
       expect(res.body.tripId).toBe(testTripId);
-      expect(res.body.basePrice).toBe(5000);
-      expect(res.body.finalPrice).toBe(5500);
+      expect(res.body.price).toBe(5500); // finalPrice is stored as price
+      expect(res.body.strategy).toBe('dynamic');
     });
 
     it('handles missing optional fields', async () => {
