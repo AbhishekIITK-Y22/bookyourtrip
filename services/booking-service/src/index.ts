@@ -268,12 +268,28 @@ app.post('/bookings', auth, async (req: Request, res: Response) => {
     const holdOk = await redis.set(holdKey, userId, 'EX', 120, 'NX');
     if (!holdOk) return res.status(409).json({ error: 'seat temporarily held' });
 
-    let appliedPrice = price ?? 0;
-    if (!price) {
-      const aiUrl = process.env.AI_SERVICE_URL || 'http://ai-service:3003';
-      const resp = await fetch(`${aiUrl}/pricing/${encodeURIComponent(tripId)}`);
-      const data = await resp.json();
-      appliedPrice = Number(data.price ?? 0);
+    // Determine applied price
+    let appliedPrice: number | null = typeof price === 'number' ? price : null;
+    if (appliedPrice == null) {
+      // Try AI service first; if unavailable, fall back to trip basePrice
+      let aiPrice: number | null = null;
+      try {
+        const aiUrl = process.env.AI_SERVICE_URL || 'http://ai-service:3003';
+        const resp = await fetch(`${aiUrl}/pricing/${encodeURIComponent(tripId)}`);
+        if (resp.ok) {
+          const data = await resp.json();
+          const parsed = Number(data.price);
+          if (!Number.isNaN(parsed) && parsed > 0) aiPrice = parsed;
+        }
+      } catch {
+        // ignore network/AI errors and fall back to basePrice
+      }
+      if (aiPrice == null) {
+        const trip = await prisma.trip.findUnique({ where: { id: tripId }, select: { basePrice: true } });
+        appliedPrice = trip?.basePrice ?? 0;
+      } else {
+        appliedPrice = aiPrice;
+      }
     }
     const booking = await prisma.booking.create({ 
       data: { 
