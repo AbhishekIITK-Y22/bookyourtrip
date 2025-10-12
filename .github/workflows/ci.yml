@@ -70,4 +70,77 @@ jobs:
           name: coverage-reports
           path: coverage
 
+  smoke:
+    needs: test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Start AI Service (bg)
+        working-directory: services/ai-service
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+          PORT: 3003
+        run: |
+          npm ci
+          npx prisma generate
+          npx prisma migrate deploy
+          npm run build
+          node dist/index.js & echo $! > ai.pid
+
+      - name: Start Auth Service (bg)
+        working-directory: services/auth-service
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+          JWT_SECRET: testsecret
+          PORT: 3001
+        run: |
+          npm ci
+          npx prisma generate
+          npx prisma migrate deploy
+          npm run build
+          node dist/index.js & echo $! > auth.pid
+
+      - name: Start Booking Service (bg)
+        working-directory: services/booking-service
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+          REDIS_URL: redis://localhost:6379
+          AI_SERVICE_URL: http://localhost:3003
+          JWT_SECRET: testsecret
+          PORT: 3002
+        run: |
+          npm ci
+          npx prisma generate
+          npx prisma migrate deploy
+          npm run build
+          node dist/index.js & echo $! > booking.pid
+
+      - name: Wait for services and hit /health endpoints
+        run: |
+          retry() { for i in {1..30}; do "$@" && break || sleep 2; done; }
+          retry curl -sf http://localhost:3001/health
+          retry curl -sf http://localhost:3002/health
+          retry curl -sf http://localhost:3003/health
+
+      - name: Stop services
+        run: |
+          kill $(cat services/ai-service/ai.pid) || true
+          kill $(cat services/auth-service/auth.pid) || true
+          kill $(cat services/booking-service/booking.pid) || true
+
 
