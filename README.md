@@ -258,6 +258,32 @@ cd services/ai-service && npm test
 
 GitHub Actions automatically runs all tests on every push. View status: https://github.com/AbhishekIITK-Y22/bookyourtrip/actions
 
+Artifacts: Each CI run uploads coverage reports for all services under a single artifact named "coverage-reports".
+
+---
+
+## ☁️ Deployment (Render Free Tier)
+
+We provide a Render blueprint file `render.yaml` to deploy all three services and their Postgres databases on the free plan.
+
+Steps:
+
+1. Fork or push this repo to your GitHub.
+2. Create a Render account and select "Blueprints → New from Blueprint".
+3. Point to this repository; Render will detect `render.yaml`.
+4. For environment variables:
+   - `JWT_SECRET` is auto-generated for services.
+   - `DATABASE_URL` is wired from the corresponding free Postgres instance.
+   - `REDIS_URL` (booking-service): set manually to a managed Redis endpoint (e.g., Upstash/Redis Labs free tier).
+   - `AI_SERVICE_URL` (booking-service): set to the deployed AI service URL after the AI service deploys (e.g., https://ai-service.onrender.com).
+5. Click "Apply" to create resources and deploy.
+
+After deploy:
+
+- Auth: https://auth-service.onrender.com/docs
+- Booking: https://booking-service.onrender.com/docs
+- AI: https://ai-service.onrender.com/docs
+
 ---
 
 ## 📁 Project Structure
