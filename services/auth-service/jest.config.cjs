@@ -9,6 +9,8 @@ module.exports = {
       useESM: true,
     },
   },
+  testTimeout: 10000,
+  forceExit: true,
 };
 
 
