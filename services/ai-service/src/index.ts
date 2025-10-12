@@ -19,8 +19,18 @@ app.get('/pricing/:tripId', (req, res) => {
 const prisma = new PrismaClient();
 app.post('/pricing/:tripId/log', async (req, res) => {
   const { tripId } = req.params;
-  const { inputs, price, strategy } = req.body || {};
-  const log = await prisma.pricingLog.create({ data: { tripId, inputs: inputs ?? {}, price: price ?? 0, strategy: strategy ?? 'static' } });
+  const { basePrice, finalPrice, factors } = req.body || {};
+  if (!basePrice || !finalPrice) {
+    return res.status(400).json({ error: 'basePrice and finalPrice required' });
+  }
+  const log = await prisma.pricingLog.create({ 
+    data: { 
+      tripId, 
+      inputs: factors ?? {}, 
+      price: finalPrice, 
+      strategy: 'dynamic' 
+    } 
+  });
   res.status(201).json(log);
 });
 
