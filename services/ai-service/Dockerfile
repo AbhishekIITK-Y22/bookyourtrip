@@ -7,7 +7,8 @@ FROM node:20-alpine3.16 AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npx prisma generate
+# Retry prisma generate up to 3 times with timeouts
+RUN npx prisma generate || npx prisma generate || npx prisma generate
 RUN npm run build
 
 FROM node:20-alpine3.16
