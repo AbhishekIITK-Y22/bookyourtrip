@@ -476,7 +476,7 @@ describe('Booking Service', () => {
   describe('PATCH /bookings/:id/passenger', () => {
     it('updates passenger details', async () => {
       // First create a booking with unique seat
-      const uniqueSeat = `UPDATE-${Date.now()}-1`;
+      const uniqueSeat = `UPDATE-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
@@ -517,7 +517,7 @@ describe('Booking Service', () => {
 
     it('prevents updating other user bookings', async () => {
       // Create booking with first user
-      const uniqueSeat = `OTHER-${Date.now()}-1`;
+      const uniqueSeat = `OTHER-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
@@ -538,7 +538,7 @@ describe('Booking Service', () => {
   describe('POST /bookings/:id/payment', () => {
     it('processes successful payment', async () => {
       // Create booking
-      const uniqueSeat = `PAY-${Date.now()}-1`;
+      const uniqueSeat = `PAY-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
@@ -560,7 +560,7 @@ describe('Booking Service', () => {
 
     it('handles payment failure', async () => {
       // Create booking
-      const uniqueSeat = `PAY-${Date.now()}-2`;
+      const uniqueSeat = `PAYFAIL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
@@ -580,7 +580,7 @@ describe('Booking Service', () => {
 
     it('prevents double payment', async () => {
       // Create and pay for booking
-      const uniqueSeat = `PAY-${Date.now()}-3`;
+      const uniqueSeat = `PAYDBL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
@@ -607,7 +607,7 @@ describe('Booking Service', () => {
   describe('GET /bookings/:id', () => {
     it('retrieves booking details', async () => {
       // Create booking
-      const uniqueSeat = `GET-${Date.now()}-1`;
+      const uniqueSeat = `GET-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
@@ -628,7 +628,7 @@ describe('Booking Service', () => {
 
     it('prevents accessing other user bookings', async () => {
       // Create booking with first user
-      const uniqueSeat = `GET-${Date.now()}-2`;
+      const uniqueSeat = `GETOTH-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
