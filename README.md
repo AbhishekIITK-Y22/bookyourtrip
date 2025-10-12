@@ -286,6 +286,29 @@ After deploy:
 
 ---
 
+## 📈 Load Testing (k6)
+
+We include a simple k6 scenario that simulates signups, search, booking creation, and cancellation.
+
+Prerequisites:
+- Install k6: https://k6.io/docs/get-started/installation/
+
+Run locally:
+
+```bash
+k6 run load/k6-booking.js \
+  -e AUTH_BASE=http://localhost:3001 \
+  -e BOOKING_BASE=http://localhost:3002 \
+  -e AI_BASE=http://localhost:3003
+```
+
+Targets (adjust options in the script):
+- 20 VUs for 1 minute (default)
+- p95 latency < 800ms
+- error rate < 5%
+
+---
+
 ## 📁 Project Structure
 
 ```
