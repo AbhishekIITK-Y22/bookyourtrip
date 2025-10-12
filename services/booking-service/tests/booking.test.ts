@@ -60,6 +60,14 @@ describe('Booking Service', () => {
     testToken = generateTestToken(testUserId);
   });
 
+  afterEach(async () => {
+    // Clean up Redis holds after each test to prevent interference
+    const keys = await redis.keys('hold:*');
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+  });
+
   afterAll(async () => {
     await prisma.$disconnect();
     await redis.quit();
@@ -488,7 +496,10 @@ describe('Booking Service', () => {
         });
       
       if (bookingRes.status !== 201) {
-        console.error('Booking creation failed:', bookingRes.status, bookingRes.body);
+        console.error('❌ Booking creation failed!');
+        console.error('Status:', bookingRes.status);
+        console.error('Body:', JSON.stringify(bookingRes.body, null, 2));
+        console.error('Seat:', uniqueSeat);
       }
       expect(bookingRes.status).toBe(201);
       const bookingId = bookingRes.body.id;
