@@ -124,8 +124,8 @@ describe('AI Service', () => {
       
       // Verify prices are within reasonable range
       for (const price of prices) {
-        expect(price).toBeGreaterThan(1000); // At least $10
-        expect(price).toBeLessThan(50000);   // At most $500
+        expect(price).toBeGreaterThanOrEqual(1000); // At least $10
+        expect(price).toBeLessThanOrEqual(50000);   // At most $500
       }
     });
   });
