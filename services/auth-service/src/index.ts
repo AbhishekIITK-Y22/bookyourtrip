@@ -61,7 +61,8 @@ app.post('/auth/signup', async (req, res) => {
   if (existing) return res.status(409).json({ error: 'Email already registered' });
   const hashed = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({ data: { email, password: hashed, role } });
-  res.status(201).json({ id: user.id, email: user.email, role: user.role });
+  const token = jwt.sign({ sub: user.id, role: user.role }, process.env.JWT_SECRET || 'dev-secret', { expiresIn: '2h' });
+  res.status(201).json({ token, user: { id: user.id, email: user.email, role: user.role } });
 });
 
 const loginSchema = z.object({ email: z.string().email(), password: z.string() });

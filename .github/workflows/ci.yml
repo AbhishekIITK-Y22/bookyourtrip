@@ -50,14 +50,15 @@ jobs:
           npm run build
           npm test -- --forceExit
 
-      - name: AI Service - install, generate, migrate, build
+      - name: AI Service - install, generate, migrate, build, test
         working-directory: services/ai-service
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
         run: |
-          npm ci || true
+          npm ci
           npx prisma generate
           npx prisma migrate deploy
-          npm run build || true
+          npm run build
+          npm test -- --forceExit
 
 

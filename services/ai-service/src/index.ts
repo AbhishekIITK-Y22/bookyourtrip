@@ -25,9 +25,12 @@ app.post('/pricing/:tripId/log', async (req, res) => {
 });
 
 const port = Number(process.env.PORT || 3003);
-app.listen(port, () => {
-  // eslint-disable-next-line no-console
-  console.log(`ai-service listening on http://localhost:${port}`);
-});
+export { app };
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => {
+    // eslint-disable-next-line no-console
+    console.log(`ai-service listening on http://localhost:${port}`);
+  });
+}
 
 
