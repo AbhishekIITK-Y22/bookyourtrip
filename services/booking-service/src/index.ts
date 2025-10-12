@@ -14,6 +14,63 @@ const swaggerSpec = swaggerJSDoc({
   definition: {
     openapi: '3.0.0',
     info: { title: 'Booking Service', version: '1.0.0' },
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+      schemas: {
+        CreateProvider: {
+          type: 'object',
+          required: ['name'],
+          properties: { name: { type: 'string' } },
+        },
+        CreateRoute: {
+          type: 'object',
+          required: ['providerId', 'source', 'destination'],
+          properties: {
+            providerId: { type: 'string' },
+            source: { type: 'string' },
+            destination: { type: 'string' },
+          },
+        },
+        CreateTrip: {
+          type: 'object',
+          required: ['routeId', 'departure', 'capacity', 'basePrice'],
+          properties: {
+            routeId: { type: 'string' },
+            departure: { type: 'string', format: 'date-time' },
+            capacity: { type: 'integer' },
+            basePrice: { type: 'integer' },
+          },
+        },
+        CreateBooking: {
+          type: 'object',
+          required: ['tripId', 'seatNo'],
+          properties: {
+            tripId: { type: 'string' },
+            seatNo: { type: 'string' },
+            price: { type: 'number' },
+          },
+        },
+        RescheduleBooking: {
+          type: 'object',
+          required: ['newTripId', 'newSeatNo'],
+          properties: {
+            newTripId: { type: 'string' },
+            newSeatNo: { type: 'string' },
+          },
+        },
+        UpdateProviderStatus: {
+          type: 'object',
+          required: ['status'],
+          properties: { status: { type: 'string', enum: ['ACTIVE', 'DISABLED'] } },
+        },
+      },
+    },
   },
   // Include TS in dev and built JS in prod
   apis: ['./src/**/*.ts', './dist/**/*.js'],
@@ -72,6 +129,12 @@ app.post('/providers', async (req: Request, res: Response) => {
  * /routes:
  *   post:
  *     summary: Create route
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateRoute'
  */
 app.post('/routes', async (req: Request, res: Response) => {
   const { providerId, source, destination } = req.body;
@@ -85,6 +148,12 @@ app.post('/routes', async (req: Request, res: Response) => {
  * /trips:
  *   post:
  *     summary: Create trip
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateTrip'
  */
 app.post('/trips', async (req: Request, res: Response) => {
   const { routeId, departure, capacity, basePrice } = req.body;
@@ -99,6 +168,16 @@ app.post('/trips', async (req: Request, res: Response) => {
  * /search:
  *   get:
  *     summary: Search trips
+ *     parameters:
+ *       - in: query
+ *         name: from
+ *         schema: { type: string }
+ *       - in: query
+ *         name: to
+ *         schema: { type: string }
+ *       - in: query
+ *         name: date
+ *         schema: { type: string, format: date }
  */
 app.get('/search', async (req: Request, res: Response) => {
   const { from, to, date } = req.query as Record<string, string | undefined>;
@@ -125,6 +204,18 @@ const createBookingSchema = z.object({ tripId: z.string(), seatNo: z.string(), p
  * /bookings:
  *   post:
  *     summary: Create booking (idempotent)
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: Idempotency-Key
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateBooking'
  */
 app.post('/bookings', auth, async (req: Request, res: Response) => {
   const parsed = createBookingSchema.safeParse(req.body);
@@ -164,6 +255,13 @@ app.post('/bookings', auth, async (req: Request, res: Response) => {
  * /bookings/{id}/cancel:
  *   post:
  *     summary: Cancel booking
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
  */
 app.post('/bookings/:id/cancel', auth, async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -178,6 +276,19 @@ const rescheduleSchema = z.object({ newTripId: z.string(), newSeatNo: z.string()
  * /bookings/{id}/reschedule:
  *   post:
  *     summary: Reschedule booking
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RescheduleBooking'
  */
 app.post('/bookings/:id/reschedule', auth, async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -213,6 +324,17 @@ app.post('/bookings/:id/reschedule', auth, async (req: Request, res: Response) =
  * /providers/{id}/status:
  *   patch:
  *     summary: Update provider status
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateProviderStatus'
  */
 app.patch('/providers/:id/status', async (req: Request, res: Response) => {
   const { id } = req.params;
