@@ -475,16 +475,21 @@ describe('Booking Service', () => {
 
   describe('PATCH /bookings/:id/passenger', () => {
     it('updates passenger details', async () => {
-      // First create a booking
+      // First create a booking with unique seat
+      const uniqueSeat = `UPDATE-${Date.now()}-1`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
         .send({ 
           tripId: testTripId, 
-          seatNo: 'UPDATE1',
+          seatNo: uniqueSeat,
           passengerName: 'Original Name',
           passengerEmail: 'original@example.com'
         });
+      
+      if (bookingRes.status !== 201) {
+        console.error('Booking creation failed:', bookingRes.status, bookingRes.body);
+      }
       expect(bookingRes.status).toBe(201);
       const bookingId = bookingRes.body.id;
 
@@ -512,10 +517,12 @@ describe('Booking Service', () => {
 
     it('prevents updating other user bookings', async () => {
       // Create booking with first user
+      const uniqueSeat = `OTHER-${Date.now()}-1`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
-        .send({ tripId: testTripId, seatNo: 'OTHER1' });
+        .send({ tripId: testTripId, seatNo: uniqueSeat });
+      expect(bookingRes.status).toBe(201);
       const bookingId = bookingRes.body.id;
 
       // Try to update with different user
@@ -531,10 +538,12 @@ describe('Booking Service', () => {
   describe('POST /bookings/:id/payment', () => {
     it('processes successful payment', async () => {
       // Create booking
+      const uniqueSeat = `PAY-${Date.now()}-1`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
-        .send({ tripId: testTripId, seatNo: 'PAY1' });
+        .send({ tripId: testTripId, seatNo: uniqueSeat });
+      expect(bookingRes.status).toBe(201);
       const bookingId = bookingRes.body.id;
 
       // Process payment
@@ -551,10 +560,12 @@ describe('Booking Service', () => {
 
     it('handles payment failure', async () => {
       // Create booking
+      const uniqueSeat = `PAY-${Date.now()}-2`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
-        .send({ tripId: testTripId, seatNo: 'PAY2' });
+        .send({ tripId: testTripId, seatNo: uniqueSeat });
+      expect(bookingRes.status).toBe(201);
       const bookingId = bookingRes.body.id;
 
       // Process payment with failure card
@@ -569,10 +580,12 @@ describe('Booking Service', () => {
 
     it('prevents double payment', async () => {
       // Create and pay for booking
+      const uniqueSeat = `PAY-${Date.now()}-3`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
-        .send({ tripId: testTripId, seatNo: 'PAY3' });
+        .send({ tripId: testTripId, seatNo: uniqueSeat });
+      expect(bookingRes.status).toBe(201);
       const bookingId = bookingRes.body.id;
 
       await request(app)
@@ -594,10 +607,12 @@ describe('Booking Service', () => {
   describe('GET /bookings/:id', () => {
     it('retrieves booking details', async () => {
       // Create booking
+      const uniqueSeat = `GET-${Date.now()}-1`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
-        .send({ tripId: testTripId, seatNo: 'GET1' });
+        .send({ tripId: testTripId, seatNo: uniqueSeat });
+      expect(bookingRes.status).toBe(201);
       const bookingId = bookingRes.body.id;
 
       // Retrieve booking
@@ -613,10 +628,12 @@ describe('Booking Service', () => {
 
     it('prevents accessing other user bookings', async () => {
       // Create booking with first user
+      const uniqueSeat = `GET-${Date.now()}-2`;
       const bookingRes = await request(app)
         .post('/bookings')
         .set('Authorization', `Bearer ${testToken}`)
-        .send({ tripId: testTripId, seatNo: 'GET2' });
+        .send({ tripId: testTripId, seatNo: uniqueSeat });
+      expect(bookingRes.status).toBe(201);
       const bookingId = bookingRes.body.id;
 
       // Try to access with different user
