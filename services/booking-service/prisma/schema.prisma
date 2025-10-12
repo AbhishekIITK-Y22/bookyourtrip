@@ -9,12 +9,15 @@ datasource db {
 }
 
 model Provider {
-  id        String   @id @default(cuid())
-  name      String
-  status    ProviderStatus @default(ACTIVE)
-  routes    Route[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  description String?
+  status      ProviderStatus @default(ACTIVE)
+  routes      Route[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Route {
@@ -48,15 +51,20 @@ model Seat {
 }
 
 model Booking {
-  id             String   @id @default(cuid())
-  userId         String
-  tripId         String
-  seatNo         String
-  priceApplied   Int
-  state          BookingState @default(PENDING)
-  idempotencyKey String? @unique
-  createdAt      DateTime @default(now())
-  trip           Trip     @relation(fields: [tripId], references: [id])
+  id               String   @id @default(cuid())
+  userId           String
+  tripId           String
+  seatNo           String
+  priceApplied     Int
+  state            BookingState @default(PENDING)
+  paymentState     PaymentState @default(PENDING)
+  idempotencyKey   String? @unique
+  passengerName    String?
+  passengerEmail   String?
+  passengerPhone   String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now()) @updatedAt
+  trip             Trip     @relation(fields: [tripId], references: [id])
 
   @@unique([tripId, seatNo])
 }
@@ -77,6 +85,14 @@ enum BookingState {
   CONFIRMED
   CANCELLED
   RESCHEDULED
+}
+
+enum PaymentState {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  REFUNDED
 }
 
 

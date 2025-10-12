@@ -448,4 +448,184 @@ describe('Booking Service', () => {
       expect(res.status).toBe(400);
     });
   });
+
+  describe('PATCH /providers/:id', () => {
+    it('updates provider details', async () => {
+      const res = await request(app)
+        .patch(`/providers/${testProviderId}`)
+        .send({ 
+          name: 'Updated Provider', 
+          email: 'provider@example.com',
+          phone: '+1234567890',
+          description: 'A reliable transport service'
+        });
+      expect(res.status).toBe(200);
+      expect(res.body.name).toBe('Updated Provider');
+      expect(res.body.email).toBe('provider@example.com');
+      expect(res.body.phone).toBe('+1234567890');
+    });
+
+    it('rejects update with no fields', async () => {
+      const res = await request(app)
+        .patch(`/providers/${testProviderId}`)
+        .send({});
+      expect(res.status).toBe(400);
+    });
+  });
+
+  describe('PATCH /bookings/:id/passenger', () => {
+    it('updates passenger details', async () => {
+      // First create a booking
+      const bookingRes = await request(app)
+        .post('/bookings')
+        .set('Authorization', `Bearer ${testToken}`)
+        .send({ 
+          tripId: testTripId, 
+          seatNo: 'UPDATE1',
+          passengerName: 'Original Name',
+          passengerEmail: 'original@example.com'
+        });
+      expect(bookingRes.status).toBe(201);
+      const bookingId = bookingRes.body.id;
+
+      // Update passenger details
+      const updateRes = await request(app)
+        .patch(`/bookings/${bookingId}/passenger`)
+        .set('Authorization', `Bearer ${testToken}`)
+        .send({ 
+          passengerName: 'Updated Name',
+          passengerEmail: 'updated@example.com',
+          passengerPhone: '+9876543210'
+        });
+      expect(updateRes.status).toBe(200);
+      expect(updateRes.body.passengerName).toBe('Updated Name');
+      expect(updateRes.body.passengerEmail).toBe('updated@example.com');
+      expect(updateRes.body.passengerPhone).toBe('+9876543210');
+    });
+
+    it('requires authentication', async () => {
+      const res = await request(app)
+        .patch('/bookings/fake-id/passenger')
+        .send({ passengerName: 'Test' });
+      expect(res.status).toBe(401);
+    });
+
+    it('prevents updating other user bookings', async () => {
+      // Create booking with first user
+      const bookingRes = await request(app)
+        .post('/bookings')
+        .set('Authorization', `Bearer ${testToken}`)
+        .send({ tripId: testTripId, seatNo: 'OTHER1' });
+      const bookingId = bookingRes.body.id;
+
+      // Try to update with different user
+      const otherToken = generateTestToken('other-user-456');
+      const updateRes = await request(app)
+        .patch(`/bookings/${bookingId}/passenger`)
+        .set('Authorization', `Bearer ${otherToken}`)
+        .send({ passengerName: 'Hacker' });
+      expect(updateRes.status).toBe(403);
+    });
+  });
+
+  describe('POST /bookings/:id/payment', () => {
+    it('processes successful payment', async () => {
+      // Create booking
+      const bookingRes = await request(app)
+        .post('/bookings')
+        .set('Authorization', `Bearer ${testToken}`)
+        .send({ tripId: testTripId, seatNo: 'PAY1' });
+      const bookingId = bookingRes.body.id;
+
+      // Process payment
+      const paymentRes = await request(app)
+        .post(`/bookings/${bookingId}/payment`)
+        .set('Authorization', `Bearer ${testToken}`)
+        .send({ cardNumber: '4111111111111111' });
+      
+      expect(paymentRes.status).toBe(200);
+      expect(paymentRes.body.success).toBe(true);
+      expect(paymentRes.body.booking.paymentState).toBe('PAID');
+      expect(paymentRes.body.booking.state).toBe('CONFIRMED');
+    });
+
+    it('handles payment failure', async () => {
+      // Create booking
+      const bookingRes = await request(app)
+        .post('/bookings')
+        .set('Authorization', `Bearer ${testToken}`)
+        .send({ tripId: testTripId, seatNo: 'PAY2' });
+      const bookingId = bookingRes.body.id;
+
+      // Process payment with failure card
+      const paymentRes = await request(app)
+        .post(`/bookings/${bookingId}/payment`)
+        .set('Authorization', `Bearer ${testToken}`)
+        .send({ cardNumber: '0000000000000000' });
+      
+      expect(paymentRes.status).toBe(400);
+      expect(paymentRes.body.success).toBe(false);
+    });
+
+    it('prevents double payment', async () => {
+      // Create and pay for booking
+      const bookingRes = await request(app)
+        .post('/bookings')
+        .set('Authorization', `Bearer ${testToken}`)
+        .send({ tripId: testTripId, seatNo: 'PAY3' });
+      const bookingId = bookingRes.body.id;
+
+      await request(app)
+        .post(`/bookings/${bookingId}/payment`)
+        .set('Authorization', `Bearer ${testToken}`)
+        .send({ cardNumber: '4111111111111111' });
+
+      // Try to pay again
+      const secondPaymentRes = await request(app)
+        .post(`/bookings/${bookingId}/payment`)
+        .set('Authorization', `Bearer ${testToken}`)
+        .send({ cardNumber: '4111111111111111' });
+      
+      expect(secondPaymentRes.status).toBe(400);
+      expect(secondPaymentRes.body.error).toBe('already paid');
+    });
+  });
+
+  describe('GET /bookings/:id', () => {
+    it('retrieves booking details', async () => {
+      // Create booking
+      const bookingRes = await request(app)
+        .post('/bookings')
+        .set('Authorization', `Bearer ${testToken}`)
+        .send({ tripId: testTripId, seatNo: 'GET1' });
+      const bookingId = bookingRes.body.id;
+
+      // Retrieve booking
+      const getRes = await request(app)
+        .get(`/bookings/${bookingId}`)
+        .set('Authorization', `Bearer ${testToken}`);
+      
+      expect(getRes.status).toBe(200);
+      expect(getRes.body.id).toBe(bookingId);
+      expect(getRes.body.trip).toBeDefined();
+      expect(getRes.body.trip.route).toBeDefined();
+    });
+
+    it('prevents accessing other user bookings', async () => {
+      // Create booking with first user
+      const bookingRes = await request(app)
+        .post('/bookings')
+        .set('Authorization', `Bearer ${testToken}`)
+        .send({ tripId: testTripId, seatNo: 'GET2' });
+      const bookingId = bookingRes.body.id;
+
+      // Try to access with different user
+      const otherToken = generateTestToken('other-user-789');
+      const getRes = await request(app)
+        .get(`/bookings/${bookingId}`)
+        .set('Authorization', `Bearer ${otherToken}`);
+      
+      expect(getRes.status).toBe(403);
+    });
+  });
 });

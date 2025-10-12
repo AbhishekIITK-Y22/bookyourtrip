@@ -69,6 +69,17 @@ export const BookingState: {
 
 export type BookingState = (typeof BookingState)[keyof typeof BookingState]
 
+
+export const PaymentState: {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
+};
+
+export type PaymentState = (typeof PaymentState)[keyof typeof PaymentState]
+
 }
 
 export type ProviderStatus = $Enums.ProviderStatus
@@ -82,6 +93,10 @@ export const SeatStatus: typeof $Enums.SeatStatus
 export type BookingState = $Enums.BookingState
 
 export const BookingState: typeof $Enums.BookingState
+
+export type PaymentState = $Enums.PaymentState
+
+export const PaymentState: typeof $Enums.PaymentState
 
 /**
  * ##  Prisma Client ʲˢ
@@ -1345,6 +1360,9 @@ export namespace Prisma {
   export type ProviderMinAggregateOutputType = {
     id: string | null
     name: string | null
+    email: string | null
+    phone: string | null
+    description: string | null
     status: $Enums.ProviderStatus | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -1353,6 +1371,9 @@ export namespace Prisma {
   export type ProviderMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    email: string | null
+    phone: string | null
+    description: string | null
     status: $Enums.ProviderStatus | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -1361,6 +1382,9 @@ export namespace Prisma {
   export type ProviderCountAggregateOutputType = {
     id: number
     name: number
+    email: number
+    phone: number
+    description: number
     status: number
     createdAt: number
     updatedAt: number
@@ -1371,6 +1395,9 @@ export namespace Prisma {
   export type ProviderMinAggregateInputType = {
     id?: true
     name?: true
+    email?: true
+    phone?: true
+    description?: true
     status?: true
     createdAt?: true
     updatedAt?: true
@@ -1379,6 +1406,9 @@ export namespace Prisma {
   export type ProviderMaxAggregateInputType = {
     id?: true
     name?: true
+    email?: true
+    phone?: true
+    description?: true
     status?: true
     createdAt?: true
     updatedAt?: true
@@ -1387,6 +1417,9 @@ export namespace Prisma {
   export type ProviderCountAggregateInputType = {
     id?: true
     name?: true
+    email?: true
+    phone?: true
+    description?: true
     status?: true
     createdAt?: true
     updatedAt?: true
@@ -1468,6 +1501,9 @@ export namespace Prisma {
   export type ProviderGroupByOutputType = {
     id: string
     name: string
+    email: string | null
+    phone: string | null
+    description: string | null
     status: $Enums.ProviderStatus
     createdAt: Date
     updatedAt: Date
@@ -1493,6 +1529,9 @@ export namespace Prisma {
   export type ProviderSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    email?: boolean
+    phone?: boolean
+    description?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1503,6 +1542,9 @@ export namespace Prisma {
   export type ProviderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    email?: boolean
+    phone?: boolean
+    description?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1511,6 +1553,9 @@ export namespace Prisma {
   export type ProviderSelectScalar = {
     id?: boolean
     name?: boolean
+    email?: boolean
+    phone?: boolean
+    description?: boolean
     status?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1530,6 +1575,9 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      email: string | null
+      phone: string | null
+      description: string | null
       status: $Enums.ProviderStatus
       createdAt: Date
       updatedAt: Date
@@ -1929,6 +1977,9 @@ export namespace Prisma {
   interface ProviderFieldRefs {
     readonly id: FieldRef<"Provider", 'String'>
     readonly name: FieldRef<"Provider", 'String'>
+    readonly email: FieldRef<"Provider", 'String'>
+    readonly phone: FieldRef<"Provider", 'String'>
+    readonly description: FieldRef<"Provider", 'String'>
     readonly status: FieldRef<"Provider", 'ProviderStatus'>
     readonly createdAt: FieldRef<"Provider", 'DateTime'>
     readonly updatedAt: FieldRef<"Provider", 'DateTime'>
@@ -5196,8 +5247,13 @@ export namespace Prisma {
     seatNo: string | null
     priceApplied: number | null
     state: $Enums.BookingState | null
+    paymentState: $Enums.PaymentState | null
     idempotencyKey: string | null
+    passengerName: string | null
+    passengerEmail: string | null
+    passengerPhone: string | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type BookingMaxAggregateOutputType = {
@@ -5207,8 +5263,13 @@ export namespace Prisma {
     seatNo: string | null
     priceApplied: number | null
     state: $Enums.BookingState | null
+    paymentState: $Enums.PaymentState | null
     idempotencyKey: string | null
+    passengerName: string | null
+    passengerEmail: string | null
+    passengerPhone: string | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type BookingCountAggregateOutputType = {
@@ -5218,8 +5279,13 @@ export namespace Prisma {
     seatNo: number
     priceApplied: number
     state: number
+    paymentState: number
     idempotencyKey: number
+    passengerName: number
+    passengerEmail: number
+    passengerPhone: number
     createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -5239,8 +5305,13 @@ export namespace Prisma {
     seatNo?: true
     priceApplied?: true
     state?: true
+    paymentState?: true
     idempotencyKey?: true
+    passengerName?: true
+    passengerEmail?: true
+    passengerPhone?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type BookingMaxAggregateInputType = {
@@ -5250,8 +5321,13 @@ export namespace Prisma {
     seatNo?: true
     priceApplied?: true
     state?: true
+    paymentState?: true
     idempotencyKey?: true
+    passengerName?: true
+    passengerEmail?: true
+    passengerPhone?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type BookingCountAggregateInputType = {
@@ -5261,8 +5337,13 @@ export namespace Prisma {
     seatNo?: true
     priceApplied?: true
     state?: true
+    paymentState?: true
     idempotencyKey?: true
+    passengerName?: true
+    passengerEmail?: true
+    passengerPhone?: true
     createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -5359,8 +5440,13 @@ export namespace Prisma {
     seatNo: string
     priceApplied: number
     state: $Enums.BookingState
+    paymentState: $Enums.PaymentState
     idempotencyKey: string | null
+    passengerName: string | null
+    passengerEmail: string | null
+    passengerPhone: string | null
     createdAt: Date
+    updatedAt: Date
     _count: BookingCountAggregateOutputType | null
     _avg: BookingAvgAggregateOutputType | null
     _sum: BookingSumAggregateOutputType | null
@@ -5389,8 +5475,13 @@ export namespace Prisma {
     seatNo?: boolean
     priceApplied?: boolean
     state?: boolean
+    paymentState?: boolean
     idempotencyKey?: boolean
+    passengerName?: boolean
+    passengerEmail?: boolean
+    passengerPhone?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     trip?: boolean | TripDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
@@ -5401,8 +5492,13 @@ export namespace Prisma {
     seatNo?: boolean
     priceApplied?: boolean
     state?: boolean
+    paymentState?: boolean
     idempotencyKey?: boolean
+    passengerName?: boolean
+    passengerEmail?: boolean
+    passengerPhone?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
     trip?: boolean | TripDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
@@ -5413,8 +5509,13 @@ export namespace Prisma {
     seatNo?: boolean
     priceApplied?: boolean
     state?: boolean
+    paymentState?: boolean
     idempotencyKey?: boolean
+    passengerName?: boolean
+    passengerEmail?: boolean
+    passengerPhone?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }
 
   export type BookingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5436,8 +5537,13 @@ export namespace Prisma {
       seatNo: string
       priceApplied: number
       state: $Enums.BookingState
+      paymentState: $Enums.PaymentState
       idempotencyKey: string | null
+      passengerName: string | null
+      passengerEmail: string | null
+      passengerPhone: string | null
       createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["booking"]>
     composites: {}
   }
@@ -5838,8 +5944,13 @@ export namespace Prisma {
     readonly seatNo: FieldRef<"Booking", 'String'>
     readonly priceApplied: FieldRef<"Booking", 'Int'>
     readonly state: FieldRef<"Booking", 'BookingState'>
+    readonly paymentState: FieldRef<"Booking", 'PaymentState'>
     readonly idempotencyKey: FieldRef<"Booking", 'String'>
+    readonly passengerName: FieldRef<"Booking", 'String'>
+    readonly passengerEmail: FieldRef<"Booking", 'String'>
+    readonly passengerPhone: FieldRef<"Booking", 'String'>
     readonly createdAt: FieldRef<"Booking", 'DateTime'>
+    readonly updatedAt: FieldRef<"Booking", 'DateTime'>
   }
     
 
@@ -6189,6 +6300,9 @@ export namespace Prisma {
   export const ProviderScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    email: 'email',
+    phone: 'phone',
+    description: 'description',
     status: 'status',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -6235,8 +6349,13 @@ export namespace Prisma {
     seatNo: 'seatNo',
     priceApplied: 'priceApplied',
     state: 'state',
+    paymentState: 'paymentState',
     idempotencyKey: 'idempotencyKey',
-    createdAt: 'createdAt'
+    passengerName: 'passengerName',
+    passengerEmail: 'passengerEmail',
+    passengerPhone: 'passengerPhone',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type BookingScalarFieldEnum = (typeof BookingScalarFieldEnum)[keyof typeof BookingScalarFieldEnum]
@@ -6356,6 +6475,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'PaymentState'
+   */
+  export type EnumPaymentStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentState'>
+    
+
+
+  /**
+   * Reference to a field of type 'PaymentState[]'
+   */
+  export type ListEnumPaymentStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentState[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -6378,6 +6511,9 @@ export namespace Prisma {
     NOT?: ProviderWhereInput | ProviderWhereInput[]
     id?: StringFilter<"Provider"> | string
     name?: StringFilter<"Provider"> | string
+    email?: StringNullableFilter<"Provider"> | string | null
+    phone?: StringNullableFilter<"Provider"> | string | null
+    description?: StringNullableFilter<"Provider"> | string | null
     status?: EnumProviderStatusFilter<"Provider"> | $Enums.ProviderStatus
     createdAt?: DateTimeFilter<"Provider"> | Date | string
     updatedAt?: DateTimeFilter<"Provider"> | Date | string
@@ -6387,6 +6523,9 @@ export namespace Prisma {
   export type ProviderOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    email?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -6399,6 +6538,9 @@ export namespace Prisma {
     OR?: ProviderWhereInput[]
     NOT?: ProviderWhereInput | ProviderWhereInput[]
     name?: StringFilter<"Provider"> | string
+    email?: StringNullableFilter<"Provider"> | string | null
+    phone?: StringNullableFilter<"Provider"> | string | null
+    description?: StringNullableFilter<"Provider"> | string | null
     status?: EnumProviderStatusFilter<"Provider"> | $Enums.ProviderStatus
     createdAt?: DateTimeFilter<"Provider"> | Date | string
     updatedAt?: DateTimeFilter<"Provider"> | Date | string
@@ -6408,6 +6550,9 @@ export namespace Prisma {
   export type ProviderOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    email?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -6422,6 +6567,9 @@ export namespace Prisma {
     NOT?: ProviderScalarWhereWithAggregatesInput | ProviderScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Provider"> | string
     name?: StringWithAggregatesFilter<"Provider"> | string
+    email?: StringNullableWithAggregatesFilter<"Provider"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"Provider"> | string | null
+    description?: StringNullableWithAggregatesFilter<"Provider"> | string | null
     status?: EnumProviderStatusWithAggregatesFilter<"Provider"> | $Enums.ProviderStatus
     createdAt?: DateTimeWithAggregatesFilter<"Provider"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Provider"> | Date | string
@@ -6604,8 +6752,13 @@ export namespace Prisma {
     seatNo?: StringFilter<"Booking"> | string
     priceApplied?: IntFilter<"Booking"> | number
     state?: EnumBookingStateFilter<"Booking"> | $Enums.BookingState
+    paymentState?: EnumPaymentStateFilter<"Booking"> | $Enums.PaymentState
     idempotencyKey?: StringNullableFilter<"Booking"> | string | null
+    passengerName?: StringNullableFilter<"Booking"> | string | null
+    passengerEmail?: StringNullableFilter<"Booking"> | string | null
+    passengerPhone?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
+    updatedAt?: DateTimeFilter<"Booking"> | Date | string
     trip?: XOR<TripRelationFilter, TripWhereInput>
   }
 
@@ -6616,8 +6769,13 @@ export namespace Prisma {
     seatNo?: SortOrder
     priceApplied?: SortOrder
     state?: SortOrder
+    paymentState?: SortOrder
     idempotencyKey?: SortOrderInput | SortOrder
+    passengerName?: SortOrderInput | SortOrder
+    passengerEmail?: SortOrderInput | SortOrder
+    passengerPhone?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     trip?: TripOrderByWithRelationInput
   }
 
@@ -6633,7 +6791,12 @@ export namespace Prisma {
     seatNo?: StringFilter<"Booking"> | string
     priceApplied?: IntFilter<"Booking"> | number
     state?: EnumBookingStateFilter<"Booking"> | $Enums.BookingState
+    paymentState?: EnumPaymentStateFilter<"Booking"> | $Enums.PaymentState
+    passengerName?: StringNullableFilter<"Booking"> | string | null
+    passengerEmail?: StringNullableFilter<"Booking"> | string | null
+    passengerPhone?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
+    updatedAt?: DateTimeFilter<"Booking"> | Date | string
     trip?: XOR<TripRelationFilter, TripWhereInput>
   }, "id" | "idempotencyKey" | "tripId_seatNo">
 
@@ -6644,8 +6807,13 @@ export namespace Prisma {
     seatNo?: SortOrder
     priceApplied?: SortOrder
     state?: SortOrder
+    paymentState?: SortOrder
     idempotencyKey?: SortOrderInput | SortOrder
+    passengerName?: SortOrderInput | SortOrder
+    passengerEmail?: SortOrderInput | SortOrder
+    passengerPhone?: SortOrderInput | SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: BookingCountOrderByAggregateInput
     _avg?: BookingAvgOrderByAggregateInput
     _max?: BookingMaxOrderByAggregateInput
@@ -6663,13 +6831,21 @@ export namespace Prisma {
     seatNo?: StringWithAggregatesFilter<"Booking"> | string
     priceApplied?: IntWithAggregatesFilter<"Booking"> | number
     state?: EnumBookingStateWithAggregatesFilter<"Booking"> | $Enums.BookingState
+    paymentState?: EnumPaymentStateWithAggregatesFilter<"Booking"> | $Enums.PaymentState
     idempotencyKey?: StringNullableWithAggregatesFilter<"Booking"> | string | null
+    passengerName?: StringNullableWithAggregatesFilter<"Booking"> | string | null
+    passengerEmail?: StringNullableWithAggregatesFilter<"Booking"> | string | null
+    passengerPhone?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
   }
 
   export type ProviderCreateInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    description?: string | null
     status?: $Enums.ProviderStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -6679,6 +6855,9 @@ export namespace Prisma {
   export type ProviderUncheckedCreateInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    description?: string | null
     status?: $Enums.ProviderStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -6688,6 +6867,9 @@ export namespace Prisma {
   export type ProviderUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6697,6 +6879,9 @@ export namespace Prisma {
   export type ProviderUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6706,6 +6891,9 @@ export namespace Prisma {
   export type ProviderCreateManyInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    description?: string | null
     status?: $Enums.ProviderStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -6714,6 +6902,9 @@ export namespace Prisma {
   export type ProviderUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6722,6 +6913,9 @@ export namespace Prisma {
   export type ProviderUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6896,8 +7090,13 @@ export namespace Prisma {
     seatNo: string
     priceApplied: number
     state?: $Enums.BookingState
+    paymentState?: $Enums.PaymentState
     idempotencyKey?: string | null
+    passengerName?: string | null
+    passengerEmail?: string | null
+    passengerPhone?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
     trip: TripCreateNestedOneWithoutBookingsInput
   }
 
@@ -6908,8 +7107,13 @@ export namespace Prisma {
     seatNo: string
     priceApplied: number
     state?: $Enums.BookingState
+    paymentState?: $Enums.PaymentState
     idempotencyKey?: string | null
+    passengerName?: string | null
+    passengerEmail?: string | null
+    passengerPhone?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type BookingUpdateInput = {
@@ -6918,8 +7122,13 @@ export namespace Prisma {
     seatNo?: StringFieldUpdateOperationsInput | string
     priceApplied?: IntFieldUpdateOperationsInput | number
     state?: EnumBookingStateFieldUpdateOperationsInput | $Enums.BookingState
+    paymentState?: EnumPaymentStateFieldUpdateOperationsInput | $Enums.PaymentState
     idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerName?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     trip?: TripUpdateOneRequiredWithoutBookingsNestedInput
   }
 
@@ -6930,8 +7139,13 @@ export namespace Prisma {
     seatNo?: StringFieldUpdateOperationsInput | string
     priceApplied?: IntFieldUpdateOperationsInput | number
     state?: EnumBookingStateFieldUpdateOperationsInput | $Enums.BookingState
+    paymentState?: EnumPaymentStateFieldUpdateOperationsInput | $Enums.PaymentState
     idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerName?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookingCreateManyInput = {
@@ -6941,8 +7155,13 @@ export namespace Prisma {
     seatNo: string
     priceApplied: number
     state?: $Enums.BookingState
+    paymentState?: $Enums.PaymentState
     idempotencyKey?: string | null
+    passengerName?: string | null
+    passengerEmail?: string | null
+    passengerPhone?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type BookingUpdateManyMutationInput = {
@@ -6951,8 +7170,13 @@ export namespace Prisma {
     seatNo?: StringFieldUpdateOperationsInput | string
     priceApplied?: IntFieldUpdateOperationsInput | number
     state?: EnumBookingStateFieldUpdateOperationsInput | $Enums.BookingState
+    paymentState?: EnumPaymentStateFieldUpdateOperationsInput | $Enums.PaymentState
     idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerName?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookingUncheckedUpdateManyInput = {
@@ -6962,8 +7186,13 @@ export namespace Prisma {
     seatNo?: StringFieldUpdateOperationsInput | string
     priceApplied?: IntFieldUpdateOperationsInput | number
     state?: EnumBookingStateFieldUpdateOperationsInput | $Enums.BookingState
+    paymentState?: EnumPaymentStateFieldUpdateOperationsInput | $Enums.PaymentState
     idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerName?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -6979,6 +7208,21 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type EnumProviderStatusFilter<$PrismaModel = never> = {
@@ -7005,6 +7249,11 @@ export namespace Prisma {
     none?: RouteWhereInput
   }
 
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type RouteOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -7012,6 +7261,9 @@ export namespace Prisma {
   export type ProviderCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    description?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7020,6 +7272,9 @@ export namespace Prisma {
   export type ProviderMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    description?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7028,6 +7283,9 @@ export namespace Prisma {
   export type ProviderMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    email?: SortOrder
+    phone?: SortOrder
+    description?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7049,6 +7307,24 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumProviderStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -7252,24 +7528,11 @@ export namespace Prisma {
     not?: NestedEnumBookingStateFilter<$PrismaModel> | $Enums.BookingState
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
+  export type EnumPaymentStateFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentState | EnumPaymentStateFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentState[] | ListEnumPaymentStateFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentState[] | ListEnumPaymentStateFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentStateFilter<$PrismaModel> | $Enums.PaymentState
   }
 
   export type BookingTripIdSeatNoCompoundUniqueInput = {
@@ -7284,8 +7547,13 @@ export namespace Prisma {
     seatNo?: SortOrder
     priceApplied?: SortOrder
     state?: SortOrder
+    paymentState?: SortOrder
     idempotencyKey?: SortOrder
+    passengerName?: SortOrder
+    passengerEmail?: SortOrder
+    passengerPhone?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type BookingAvgOrderByAggregateInput = {
@@ -7299,8 +7567,13 @@ export namespace Prisma {
     seatNo?: SortOrder
     priceApplied?: SortOrder
     state?: SortOrder
+    paymentState?: SortOrder
     idempotencyKey?: SortOrder
+    passengerName?: SortOrder
+    passengerEmail?: SortOrder
+    passengerPhone?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type BookingMinOrderByAggregateInput = {
@@ -7310,8 +7583,13 @@ export namespace Prisma {
     seatNo?: SortOrder
     priceApplied?: SortOrder
     state?: SortOrder
+    paymentState?: SortOrder
     idempotencyKey?: SortOrder
+    passengerName?: SortOrder
+    passengerEmail?: SortOrder
+    passengerPhone?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type BookingSumOrderByAggregateInput = {
@@ -7328,22 +7606,14 @@ export namespace Prisma {
     _max?: NestedEnumBookingStateFilter<$PrismaModel>
   }
 
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
+  export type EnumPaymentStateWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentState | EnumPaymentStateFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentState[] | ListEnumPaymentStateFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentState[] | ListEnumPaymentStateFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentStateWithAggregatesFilter<$PrismaModel> | $Enums.PaymentState
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPaymentStateFilter<$PrismaModel>
+    _max?: NestedEnumPaymentStateFilter<$PrismaModel>
   }
 
   export type RouteCreateNestedManyWithoutProviderInput = {
@@ -7362,6 +7632,10 @@ export namespace Prisma {
 
   export type StringFieldUpdateOperationsInput = {
     set?: string
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type EnumProviderStatusFieldUpdateOperationsInput = {
@@ -7590,8 +7864,8 @@ export namespace Prisma {
     set?: $Enums.BookingState
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
+  export type EnumPaymentStateFieldUpdateOperationsInput = {
+    set?: $Enums.PaymentState
   }
 
   export type TripUpdateOneRequiredWithoutBookingsNestedInput = {
@@ -7614,6 +7888,20 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type NestedEnumProviderStatusFilter<$PrismaModel = never> = {
@@ -7660,6 +7948,34 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedEnumProviderStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -7737,18 +8053,11 @@ export namespace Prisma {
     not?: NestedEnumBookingStateFilter<$PrismaModel> | $Enums.BookingState
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  export type NestedEnumPaymentStateFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentState | EnumPaymentStateFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentState[] | ListEnumPaymentStateFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentState[] | ListEnumPaymentStateFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentStateFilter<$PrismaModel> | $Enums.PaymentState
   }
 
   export type NestedEnumBookingStateWithAggregatesFilter<$PrismaModel = never> = {
@@ -7761,32 +8070,14 @@ export namespace Prisma {
     _max?: NestedEnumBookingStateFilter<$PrismaModel>
   }
 
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  export type NestedEnumPaymentStateWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.PaymentState | EnumPaymentStateFieldRefInput<$PrismaModel>
+    in?: $Enums.PaymentState[] | ListEnumPaymentStateFieldRefInput<$PrismaModel>
+    notIn?: $Enums.PaymentState[] | ListEnumPaymentStateFieldRefInput<$PrismaModel>
+    not?: NestedEnumPaymentStateWithAggregatesFilter<$PrismaModel> | $Enums.PaymentState
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPaymentStateFilter<$PrismaModel>
+    _max?: NestedEnumPaymentStateFilter<$PrismaModel>
   }
 
   export type RouteCreateWithoutProviderInput = {
@@ -7870,6 +8161,9 @@ export namespace Prisma {
   export type ProviderCreateWithoutRoutesInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    description?: string | null
     status?: $Enums.ProviderStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7878,6 +8172,9 @@ export namespace Prisma {
   export type ProviderUncheckedCreateWithoutRoutesInput = {
     id?: string
     name: string
+    email?: string | null
+    phone?: string | null
+    description?: string | null
     status?: $Enums.ProviderStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7929,6 +8226,9 @@ export namespace Prisma {
   export type ProviderUpdateWithoutRoutesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7937,6 +8237,9 @@ export namespace Prisma {
   export type ProviderUncheckedUpdateWithoutRoutesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7970,8 +8273,13 @@ export namespace Prisma {
     seatNo: string
     priceApplied: number
     state?: $Enums.BookingState
+    paymentState?: $Enums.PaymentState
     idempotencyKey?: string | null
+    passengerName?: string | null
+    passengerEmail?: string | null
+    passengerPhone?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type BookingUncheckedCreateWithoutTripInput = {
@@ -7980,8 +8288,13 @@ export namespace Prisma {
     seatNo: string
     priceApplied: number
     state?: $Enums.BookingState
+    paymentState?: $Enums.PaymentState
     idempotencyKey?: string | null
+    passengerName?: string | null
+    passengerEmail?: string | null
+    passengerPhone?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type BookingCreateOrConnectWithoutTripInput = {
@@ -8065,8 +8378,13 @@ export namespace Prisma {
     seatNo?: StringFilter<"Booking"> | string
     priceApplied?: IntFilter<"Booking"> | number
     state?: EnumBookingStateFilter<"Booking"> | $Enums.BookingState
+    paymentState?: EnumPaymentStateFilter<"Booking"> | $Enums.PaymentState
     idempotencyKey?: StringNullableFilter<"Booking"> | string | null
+    passengerName?: StringNullableFilter<"Booking"> | string | null
+    passengerEmail?: StringNullableFilter<"Booking"> | string | null
+    passengerPhone?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
+    updatedAt?: DateTimeFilter<"Booking"> | Date | string
   }
 
   export type RouteUpsertWithoutTripsInput = {
@@ -8268,8 +8586,13 @@ export namespace Prisma {
     seatNo: string
     priceApplied: number
     state?: $Enums.BookingState
+    paymentState?: $Enums.PaymentState
     idempotencyKey?: string | null
+    passengerName?: string | null
+    passengerEmail?: string | null
+    passengerPhone?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type SeatUpdateWithoutTripInput = {
@@ -8296,8 +8619,13 @@ export namespace Prisma {
     seatNo?: StringFieldUpdateOperationsInput | string
     priceApplied?: IntFieldUpdateOperationsInput | number
     state?: EnumBookingStateFieldUpdateOperationsInput | $Enums.BookingState
+    paymentState?: EnumPaymentStateFieldUpdateOperationsInput | $Enums.PaymentState
     idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerName?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookingUncheckedUpdateWithoutTripInput = {
@@ -8306,8 +8634,13 @@ export namespace Prisma {
     seatNo?: StringFieldUpdateOperationsInput | string
     priceApplied?: IntFieldUpdateOperationsInput | number
     state?: EnumBookingStateFieldUpdateOperationsInput | $Enums.BookingState
+    paymentState?: EnumPaymentStateFieldUpdateOperationsInput | $Enums.PaymentState
     idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerName?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookingUncheckedUpdateManyWithoutTripInput = {
@@ -8316,8 +8649,13 @@ export namespace Prisma {
     seatNo?: StringFieldUpdateOperationsInput | string
     priceApplied?: IntFieldUpdateOperationsInput | number
     state?: EnumBookingStateFieldUpdateOperationsInput | $Enums.BookingState
+    paymentState?: EnumPaymentStateFieldUpdateOperationsInput | $Enums.PaymentState
     idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerName?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    passengerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

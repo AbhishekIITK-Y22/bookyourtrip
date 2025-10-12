@@ -54,6 +54,35 @@ const swaggerSpec = swaggerJSDoc({
             tripId: { type: 'string' },
             seatNo: { type: 'string' },
             price: { type: 'number' },
+            passengerName: { type: 'string' },
+            passengerEmail: { type: 'string', format: 'email' },
+            passengerPhone: { type: 'string' },
+          },
+        },
+        UpdatePassengerDetails: {
+          type: 'object',
+          properties: {
+            passengerName: { type: 'string' },
+            passengerEmail: { type: 'string', format: 'email' },
+            passengerPhone: { type: 'string' },
+          },
+        },
+        UpdateProviderDetails: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            email: { type: 'string', format: 'email' },
+            phone: { type: 'string' },
+            description: { type: 'string' },
+          },
+        },
+        ProcessPayment: {
+          type: 'object',
+          required: ['cardNumber'],
+          properties: {
+            cardNumber: { type: 'string' },
+            expiryDate: { type: 'string' },
+            cvv: { type: 'string' },
           },
         },
         RescheduleBooking: {
@@ -198,7 +227,14 @@ app.get('/search', async (req: Request, res: Response) => {
 });
 
 // Protected booking create (skeleton)
-const createBookingSchema = z.object({ tripId: z.string(), seatNo: z.string(), price: z.number().optional() });
+const createBookingSchema = z.object({ 
+  tripId: z.string(), 
+  seatNo: z.string(), 
+  price: z.number().optional(),
+  passengerName: z.string().optional(),
+  passengerEmail: z.string().email().optional(),
+  passengerPhone: z.string().optional(),
+});
 /**
  * @openapi
  * /bookings:
@@ -220,7 +256,7 @@ const createBookingSchema = z.object({ tripId: z.string(), seatNo: z.string(), p
 app.post('/bookings', auth, async (req: Request, res: Response) => {
   const parsed = createBookingSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
-  const { tripId, seatNo, price } = parsed.data;
+  const { tripId, seatNo, price, passengerName, passengerEmail, passengerPhone } = parsed.data;
   const userId = ((req as any).user?.sub ?? '') as string;
   const idempotencyKey = (req.headers['idempotency-key'] ?? '') as string;
   try {
@@ -239,7 +275,18 @@ app.post('/bookings', auth, async (req: Request, res: Response) => {
       const data = await resp.json();
       appliedPrice = Number(data.price ?? 0);
     }
-    const booking = await prisma.booking.create({ data: { tripId, userId, seatNo, priceApplied: appliedPrice, idempotencyKey: idempotencyKey || null } });
+    const booking = await prisma.booking.create({ 
+      data: { 
+        tripId, 
+        userId, 
+        seatNo, 
+        priceApplied: appliedPrice, 
+        idempotencyKey: idempotencyKey || null,
+        passengerName: passengerName || null,
+        passengerEmail: passengerEmail || null,
+        passengerPhone: passengerPhone || null,
+      } 
+    });
     await redis.del(holdKey);
     return res.status(201).json(booking);
   } catch (e) {
@@ -342,6 +389,185 @@ app.patch('/providers/:id/status', async (req: Request, res: Response) => {
   if (!status) return res.status(400).json({ error: 'status required' });
   const provider = await prisma.provider.update({ where: { id }, data: { status } });
   res.json(provider);
+});
+
+// Update provider details
+/**
+ * @openapi
+ * /providers/{id}:
+ *   patch:
+ *     summary: Update provider details
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateProviderDetails'
+ */
+app.patch('/providers/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name, email, phone, description } = req.body;
+  const updateData: any = {};
+  if (name) updateData.name = name;
+  if (email !== undefined) updateData.email = email;
+  if (phone !== undefined) updateData.phone = phone;
+  if (description !== undefined) updateData.description = description;
+  
+  if (Object.keys(updateData).length === 0) {
+    return res.status(400).json({ error: 'at least one field required' });
+  }
+  
+  const provider = await prisma.provider.update({ where: { id }, data: updateData });
+  res.json(provider);
+});
+
+// Update passenger details in booking
+/**
+ * @openapi
+ * /bookings/{id}/passenger:
+ *   patch:
+ *     summary: Update passenger details
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdatePassengerDetails'
+ */
+app.patch('/bookings/:id/passenger', auth, async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { passengerName, passengerEmail, passengerPhone } = req.body;
+  const userId = ((req as any).user?.sub ?? '') as string;
+  
+  // Verify ownership
+  const booking = await prisma.booking.findUnique({ where: { id } });
+  if (!booking) return res.status(404).json({ error: 'booking not found' });
+  if (booking.userId !== userId) return res.status(403).json({ error: 'forbidden' });
+  
+  const updateData: any = {};
+  if (passengerName !== undefined) updateData.passengerName = passengerName;
+  if (passengerEmail !== undefined) updateData.passengerEmail = passengerEmail;
+  if (passengerPhone !== undefined) updateData.passengerPhone = passengerPhone;
+  
+  if (Object.keys(updateData).length === 0) {
+    return res.status(400).json({ error: 'at least one field required' });
+  }
+  
+  const updated = await prisma.booking.update({ where: { id }, data: updateData });
+  res.json(updated);
+});
+
+// Process payment (dummy implementation)
+/**
+ * @openapi
+ * /bookings/{id}/payment:
+ *   post:
+ *     summary: Process payment for booking
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ProcessPayment'
+ */
+app.post('/bookings/:id/payment', auth, async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { cardNumber } = req.body;
+  const userId = ((req as any).user?.sub ?? '') as string;
+  
+  if (!cardNumber) return res.status(400).json({ error: 'cardNumber required' });
+  
+  // Verify ownership
+  const booking = await prisma.booking.findUnique({ where: { id } });
+  if (!booking) return res.status(404).json({ error: 'booking not found' });
+  if (booking.userId !== userId) return res.status(403).json({ error: 'forbidden' });
+  
+  // Check if already paid
+  if (booking.paymentState === 'PAID') {
+    return res.status(400).json({ error: 'already paid' });
+  }
+  
+  // Dummy payment processing - simulate success/failure based on card number
+  const isSuccess = !cardNumber.startsWith('0000'); // Dummy logic: 0000* = failure
+  
+  if (isSuccess) {
+    // Update payment and booking state
+    const updated = await prisma.booking.update({
+      where: { id },
+      data: { 
+        paymentState: 'PAID',
+        state: 'CONFIRMED' // Auto-confirm on payment
+      },
+    });
+    res.json({ 
+      success: true, 
+      message: 'payment successful',
+      booking: updated 
+    });
+  } else {
+    // Mark as failed
+    await prisma.booking.update({
+      where: { id },
+      data: { paymentState: 'FAILED' },
+    });
+    res.status(400).json({ 
+      success: false, 
+      error: 'payment failed' 
+    });
+  }
+});
+
+// Get booking details
+/**
+ * @openapi
+ * /bookings/{id}:
+ *   get:
+ *     summary: Get booking details
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ */
+app.get('/bookings/:id', auth, async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const userId = ((req as any).user?.sub ?? '') as string;
+  const userRole = ((req as any).user?.role ?? '') as string;
+  
+  const booking = await prisma.booking.findUnique({ 
+    where: { id },
+    include: { trip: { include: { route: true } } }
+  });
+  
+  if (!booking) return res.status(404).json({ error: 'booking not found' });
+  
+  // Only allow owner or provider to view
+  if (booking.userId !== userId && userRole !== 'PROVIDER') {
+    return res.status(403).json({ error: 'forbidden' });
+  }
+  
+  res.json(booking);
 });
 
 const port = Number(process.env.PORT || 3002);

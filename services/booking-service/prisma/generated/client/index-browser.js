@@ -125,6 +125,9 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.ProviderScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  email: 'email',
+  phone: 'phone',
+  description: 'description',
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -159,8 +162,13 @@ exports.Prisma.BookingScalarFieldEnum = {
   seatNo: 'seatNo',
   priceApplied: 'priceApplied',
   state: 'state',
+  paymentState: 'paymentState',
   idempotencyKey: 'idempotencyKey',
-  createdAt: 'createdAt'
+  passengerName: 'passengerName',
+  passengerEmail: 'passengerEmail',
+  passengerPhone: 'passengerPhone',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -193,6 +201,14 @@ exports.BookingState = exports.$Enums.BookingState = {
   CONFIRMED: 'CONFIRMED',
   CANCELLED: 'CANCELLED',
   RESCHEDULED: 'RESCHEDULED'
+};
+
+exports.PaymentState = exports.$Enums.PaymentState = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  PAID: 'PAID',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
 };
 
 exports.Prisma.ModelName = {
