@@ -277,18 +277,37 @@ app.post('/bookings', auth, async (req: Request, res: Response) => {
     const holdOk = await redis.set(holdKey, userId, 'EX', 120, 'NX');
     if (!holdOk) return res.status(409).json({ error: 'seat temporarily held' });
 
-    // Determine applied price
+    // Determine applied price using AGENTIC AI
     let appliedPrice: number | null = typeof price === 'number' ? price : null;
     if (appliedPrice == null) {
       // Try AI service first; if unavailable, fall back to trip basePrice
       let aiPrice: number | null = null;
       try {
         const aiUrl = process.env.AI_SERVICE_URL || 'http://ai-service:3003';
-        const resp = await fetch(`${aiUrl}/pricing/${encodeURIComponent(tripId)}`);
-        if (resp.ok) {
-          const data = await resp.json();
-          const parsed = Number(data.price);
-          if (!Number.isNaN(parsed) && parsed > 0) aiPrice = parsed;
+        
+        // Get trip details for AI agent (capacity, availability, base price)
+        const tripWithSeats = await prisma.trip.findUnique({
+          where: { id: tripId },
+          include: {
+            seats: {
+              where: { status: 'AVAILABLE' }
+            }
+          }
+        });
+        
+        if (tripWithSeats) {
+          const seatsAvailable = tripWithSeats.seats.length;
+          const totalSeats = tripWithSeats.capacity;
+          
+          // Call AGENTIC AI with seat availability data
+          const pricingUrl = `${aiUrl}/pricing/${encodeURIComponent(tripId)}?basePrice=${tripWithSeats.basePrice}&seatsAvailable=${seatsAvailable}&totalSeats=${totalSeats}`;
+          const resp = await fetch(pricingUrl);
+          
+          if (resp.ok) {
+            const data = await resp.json();
+            const parsed = Number(data.finalPrice);
+            if (!Number.isNaN(parsed) && parsed > 0) aiPrice = parsed;
+          }
         }
       } catch {
         // ignore network/AI errors and fall back to basePrice
