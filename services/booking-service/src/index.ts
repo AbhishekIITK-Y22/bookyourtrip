@@ -177,6 +177,18 @@ app.post('/trips', async (req: Request, res: Response) => {
   const { routeId, departure, capacity, basePrice } = req.body;
   if (!routeId || !departure || !capacity || !basePrice) return res.status(400).json({ error: 'routeId, departure, capacity, basePrice required' });
   const trip = await prisma.trip.create({ data: { routeId, departure: new Date(departure), capacity, basePrice } });
+  
+  // Auto-create seats for the trip
+  const seats = [];
+  for (let i = 1; i <= capacity; i++) {
+    seats.push({
+      tripId: trip.id,
+      seatNo: `A${i.toString().padStart(2, '0')}`,
+      status: 'AVAILABLE' as const
+    });
+  }
+  await prisma.seat.createMany({ data: seats });
+  
   res.status(201).json(trip);
 });
 
