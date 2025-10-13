@@ -4,9 +4,11 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { PrismaClient, Prisma } from '../prisma/generated/client/index.js';
 import { z } from 'zod';
+import { logger, requestLogger } from './logger.js';
 
 const app = express();
 app.use(express.json());
+app.use(requestLogger);
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'auth-service' });
@@ -42,13 +44,20 @@ const signupSchema = z.object({
  */
 app.post('/auth/signup', async (req, res) => {
   const parsed = signupSchema.safeParse(req.body);
-  if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
+  if (!parsed.success) {
+    logger.warn({ errors: parsed.error.flatten() }, 'Signup validation failed');
+    return res.status(400).json({ error: parsed.error.flatten() });
+  }
   const { email, password, role } = parsed.data;
   const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) return res.status(409).json({ error: 'Email already registered' });
+  if (existing) {
+    logger.warn({ email }, 'Signup failed: email already registered');
+    return res.status(409).json({ error: 'Email already registered' });
+  }
   const hashed = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({ data: { email, password: hashed, role } });
   const token = jwt.sign({ sub: user.id, role: user.role }, process.env.JWT_SECRET || 'dev-secret', { expiresIn: '2h' });
+  logger.info({ userId: user.id, email, role }, 'User signed up successfully');
   res.status(201).json({ token, user: { id: user.id, email: user.email, role: user.role } });
 });
 
