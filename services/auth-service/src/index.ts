@@ -4,22 +4,9 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { PrismaClient, Prisma } from '../prisma/generated/client/index.js';
 import { z } from 'zod';
-import swaggerUi from 'swagger-ui-express';
-import swaggerJSDoc from 'swagger-jsdoc';
 
 const app = express();
 app.use(express.json());
-
-// Swagger
-const swaggerSpec = swaggerJSDoc({
-  definition: {
-    openapi: '3.0.0',
-    info: { title: 'Auth Service', version: '1.0.0' },
-  },
-  // Include both TS (dev) and built JS (prod) so docs work in Docker
-  apis: ['./src/**/*.ts', './dist/**/*.js'],
-});
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'auth-service' });

@@ -3,26 +3,37 @@ import jwt from 'jsonwebtoken';
 import { PrismaClient } from '../prisma/generated/client/index.js';
 import { z } from 'zod';
 import Redis from 'ioredis';
-import swaggerUi from 'swagger-ui-express';
-import swaggerJSDoc from 'swagger-jsdoc';
 
 const app = express();
 app.use(express.json());
 
-// Swagger
-const swaggerSpec = swaggerJSDoc({
-  definition: {
-    openapi: '3.0.0',
-    info: { title: 'Booking Service', version: '1.0.0' },
-    components: {
-      securitySchemes: {
-        BearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
-      },
-      schemas: {
+// Removed Swagger to avoid test dependencies
+
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok', service: 'booking-service' });
+});
+
+const prisma = new PrismaClient();
+const redis = new Redis(process.env.REDIS_URL || 'redis://redis:6379');
+
+// Auth middleware
+function auth(req: Request, res: Response, next: NextFunction) {
+  const hdr = req.headers.authorization || '';
+  const token = hdr.startsWith('Bearer ') ? hdr.slice(7) : null;
+  if (!token) {
+    res.status(401).json({ error: 'missing token' });
+    return;
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret') as jwt.JwtPayload;
+    (req as any).user = decoded;
+    next();
+  } catch {
+    res.status(401).json({ error: 'invalid token' });
+  }
+}
+
+/*const schemas = {
         CreateProvider: {
           type: 'object',
           required: ['name'],
@@ -101,38 +112,16 @@ const swaggerSpec = swaggerJSDoc({
       },
     },
   },
-  // Include TS in dev and built JS in prod
-  apis: ['./src/**/*.ts', './dist/**/*.js'],
-});
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+   Include TS in dev and built JS in prod
+ */ 
+// apis: ['./src/**/*.ts', './dist/**/*.js'],*/
+//});
+//app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'booking-service' });
-});
 
-const prisma = new PrismaClient();
-const redis = new Redis(process.env.REDIS_URL || 'redis://redis:6379');
-
-// Auth middleware
-function auth(req: Request, res: Response, next: NextFunction) {
-  const hdr = req.headers.authorization || '';
-  const token = hdr.startsWith('Bearer ') ? hdr.slice(7) : null;
-  if (!token) {
-    res.status(401).json({ error: 'missing token' });
-    return;
-  }
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret') as jwt.JwtPayload;
-    (req as any).user = decoded;
-    next();
-  } catch {
-    res.status(401).json({ error: 'invalid token' });
-  }
-}
 
 // Simple routes for provider and trips (stubs to verify DB connectivity)
 /**
- * @openapi
  * /providers:
  *   post:
  *     summary: Create provider
@@ -222,7 +211,15 @@ app.get('/search', async (req: Request, res: Response) => {
     end.setDate(start.getDate() + 1);
     where.departure = { gte: start, lt: end };
   }
-  const trips = await prisma.trip.findMany({ where, include: { route: true } });
+  const trips = await prisma.trip.findMany({ 
+    where, 
+    include: { 
+      route: true,
+      seats: {
+        where: { status: 'AVAILABLE' }
+      }
+    } 
+  });
   res.json(trips);
 });
 

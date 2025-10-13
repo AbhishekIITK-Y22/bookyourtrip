@@ -7,6 +7,7 @@ async function main() {
 
   // Clean existing data
   await prisma.booking.deleteMany();
+  await prisma.seat.deleteMany();
   await prisma.trip.deleteMany();
   await prisma.route.deleteMany();
   await prisma.provider.deleteMany();
@@ -64,7 +65,7 @@ async function main() {
   nextWeek.setDate(nextWeek.getDate() + 7);
   nextWeek.setHours(14, 30, 0, 0);
 
-  await prisma.trip.create({
+  const trip1 = await prisma.trip.create({
     data: {
       routeId: route1.id,
       departure: tomorrow,
@@ -73,7 +74,7 @@ async function main() {
     },
   });
 
-  await prisma.trip.create({
+  const trip2 = await prisma.trip.create({
     data: {
       routeId: route1.id,
       departure: nextWeek,
@@ -82,7 +83,7 @@ async function main() {
     },
   });
 
-  await prisma.trip.create({
+  const trip3 = await prisma.trip.create({
     data: {
       routeId: route2.id,
       departure: tomorrow,
@@ -91,7 +92,7 @@ async function main() {
     },
   });
 
-  await prisma.trip.create({
+  const trip4 = await prisma.trip.create({
     data: {
       routeId: route3.id,
       departure: nextWeek,
@@ -99,6 +100,26 @@ async function main() {
       basePrice: 3500, // $35.00
     },
   });
+
+  // Create seats for each trip
+  const trips = [trip1, trip2, trip3, trip4];
+  const capacities = [40, 40, 30, 50];
+  
+  for (let i = 0; i < trips.length; i++) {
+    const trip = trips[i];
+    const capacity = capacities[i];
+    
+    const seats = [];
+    for (let seatNum = 1; seatNum <= capacity; seatNum++) {
+      seats.push({
+        tripId: trip.id,
+        seatNo: `A${seatNum.toString().padStart(2, '0')}`,
+        status: 'AVAILABLE' as const
+      });
+    }
+    
+    await prisma.seat.createMany({ data: seats });
+  }
 
   console.log('✅ Created trips');
 
