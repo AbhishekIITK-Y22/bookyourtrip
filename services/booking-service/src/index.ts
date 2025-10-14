@@ -1,4 +1,5 @@
 import express, { type Request, type Response, type NextFunction } from 'express';
+import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '../prisma/generated/client/index.js';
 import { z } from 'zod';
@@ -6,6 +7,7 @@ import Redis from 'ioredis';
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: process.env.CORS_ORIGIN || '*'}));
 
 // Removed Swagger to avoid test dependencies
 
@@ -159,6 +161,36 @@ app.post('/routes', async (req: Request, res: Response) => {
   if (!providerId || !source || !destination) return res.status(400).json({ error: 'providerId, source, destination required' });
   const route = await prisma.route.create({ data: { providerId, source, destination } });
   res.status(201).json(route);
+});
+
+// Listings for provider dashboard
+app.get('/providers', async (_req: Request, res: Response) => {
+  const providers = await prisma.provider.findMany();
+  res.json(providers);
+});
+
+app.get('/routes', async (_req: Request, res: Response) => {
+  const routes = await prisma.route.findMany({ include: { provider: true } });
+  res.json(routes);
+});
+
+app.get('/trips', async (_req: Request, res: Response) => {
+  const trips = await prisma.trip.findMany({ include: { route: true } });
+  res.json(trips);
+});
+
+// Get a single trip with seats and route
+app.get('/trips/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const trip = await prisma.trip.findUnique({ 
+    where: { id }, 
+    include: { 
+      route: true,
+      seats: true,
+    } 
+  });
+  if (!trip) return res.status(404).json({ error: 'not found' });
+  res.json(trip);
 });
 
 /**
@@ -612,6 +644,17 @@ app.get('/bookings/:id', auth, async (req: Request, res: Response) => {
   }
   
   res.json(booking);
+});
+
+// List current user's bookings
+app.get('/bookings', auth, async (req: Request, res: Response) => {
+  const userId = ((req as any).user?.sub ?? '') as string;
+  const bookings = await prisma.booking.findMany({ 
+    where: { userId }, 
+    orderBy: { createdAt: 'desc' as const },
+    include: { trip: { include: { route: true } } }
+  });
+  res.json(bookings);
 });
 
 const port = Number(process.env.PORT || 3002);

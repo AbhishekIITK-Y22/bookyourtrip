@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "workspaces": [
-    "services/*"
+    "services/*",
+    "web"
   ],
   "scripts": {
     "dev": "npm --workspaces run dev",

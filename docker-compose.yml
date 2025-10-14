@@ -95,6 +95,22 @@ services:
     ports:
       - "3003:3003"
 
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    command: npm run dev
+    environment:
+      NEXT_PUBLIC_AUTH_URL: http://auth-service:3001
+      NEXT_PUBLIC_BOOKING_URL: http://booking-service:3002
+      NEXT_PUBLIC_AI_URL: http://ai-service:3003
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth-service
+      - booking-service
+      - ai-service
+
 volumes:
   auth_db_data:
   booking_db_data:
