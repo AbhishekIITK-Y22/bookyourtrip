@@ -5,9 +5,11 @@ import jwt from 'jsonwebtoken';
 import { PrismaClient, Prisma } from '../prisma/generated/client/index.js';
 import { z } from 'zod';
 import { logger, requestLogger } from './logger.js';
+import cors from 'cors';
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 app.use(requestLogger);
 
 app.get('/health', (_req, res) => {

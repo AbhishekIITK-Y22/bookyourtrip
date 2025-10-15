@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "./generated/client"
+  provider      = "prisma-client-js"
+  output        = "./generated/client"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-1.1.x"]
 }
 
 datasource db {
@@ -66,7 +67,8 @@ model Booking {
   updatedAt      DateTime     @default(now()) @updatedAt
   trip           Trip         @relation(fields: [tripId], references: [id])
 
-  @@unique([tripId, seatNo])
+  // Removed @@unique([tripId, seatNo]) to allow historical bookings for same seat
+  // Business logic validation prevents active double-booking
 }
 
 enum ProviderStatus {

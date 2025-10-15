@@ -2,12 +2,21 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1f1926;
+  --color-primary: #751AEA;
+  --color-secondary: #420F84;
+  --color-accent: #FF7F50;
+  --surface-100: #ffffff;
+  --surface-200: #F7F7F7;
+  --surface-300: #DDDDDD;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -22,5 +31,20 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Headings closer to RusticAI style */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* Gradient primary button utility */
+.btn-primary-gradient {
+  @apply text-white rounded px-4 py-2; 
+  background-image: linear-gradient(to bottom right, var(--color-primary), var(--color-secondary));
+}
+.btn-primary-gradient:hover {
+  background-image: linear-gradient(to bottom right, rgba(11,200,255,0.2), rgba(66,15,132,0.2));
 }

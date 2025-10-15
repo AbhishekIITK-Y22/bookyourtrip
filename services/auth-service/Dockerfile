@@ -7,17 +7,17 @@ FROM node:20-alpine3.16 AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# Retry prisma generate up to 3 times with timeouts
-RUN npx prisma generate || npx prisma generate || npx prisma generate
+# Skip prisma generate - use pre-generated client with correct binary targets
+# RUN npx prisma generate || npx prisma generate || npx prisma generate
 RUN npm run build
 
 FROM node:20-alpine3.16
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=build /app/dist ./dist
-COPY package.json ./
+COPY package.json package-lock.json* ./
 COPY prisma ./prisma
-RUN npm install --omit=dev --ignore-scripts || true && npx prisma generate || true
+RUN npm ci --omit=dev --ignore-scripts || npm install --omit=dev --ignore-scripts
 EXPOSE 3001
 CMD ["node", "dist/index.js"]
 

@@ -8,7 +8,7 @@ export default function Home() {
           <input className="border rounded px-3 py-2 md:col-span-2" placeholder="From (City)" name="from" />
           <input className="border rounded px-3 py-2 md:col-span-2" placeholder="To (City)" name="to" />
           <input className="border rounded px-3 py-2" type="date" name="date" />
-          <button type="submit" className="md:col-span-5 bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2">Search</button>
+          <button type="submit" className="md:col-span-5 btn-primary-gradient">Search</button>
         </form>
       </section>
 

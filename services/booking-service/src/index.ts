@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { PrismaClient } from '../prisma/generated/client/index.js';
 import { z } from 'zod';
 import Redis from 'ioredis';
+import { logger } from './logger.js';
 
 const app = express();
 app.use(express.json());
@@ -13,6 +14,82 @@ app.use(cors({ origin: process.env.CORS_ORIGIN || '*'}));
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'booking-service' });
+});
+
+// Background job to clean up expired unpaid bookings (runs every minute)
+setInterval(async () => {
+  try {
+    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+    
+    // Find all pending bookings older than 15 minutes
+    const expiredBookings = await prisma.booking.findMany({
+      where: {
+        state: 'PENDING',
+        paymentState: { in: ['PENDING', 'FAILED'] },
+        createdAt: { lt: fifteenMinutesAgo }
+      }
+    });
+    
+    if (expiredBookings.length > 0) {
+      logger.info(`Found ${expiredBookings.length} expired bookings to clean up`);
+      
+      for (const booking of expiredBookings) {
+        try {
+          await prisma.$transaction(async (tx) => {
+            // Cancel expired booking
+            await tx.booking.update({
+              where: { id: booking.id },
+              data: { 
+                state: 'CANCELLED', 
+                paymentState: booking.paymentState === 'FAILED' ? 'FAILED' : 'REFUNDED'
+              }
+            });
+            
+            // Release seat back to AVAILABLE
+            await tx.seat.updateMany({
+              where: { 
+                tripId: booking.tripId, 
+                seatNo: booking.seatNo 
+              },
+              data: { status: 'AVAILABLE' }
+            });
+          });
+          
+          // Remove from Redis
+          await redis.del(`booking:hold:${booking.id}`);
+          
+          logger.info(`Auto-cancelled expired booking ${booking.id} (seat ${booking.seatNo} on trip ${booking.tripId})`);
+        } catch (error) {
+          logger.error({ error, bookingId: booking.id }, 'Failed to cancel expired booking');
+        }
+      }
+    }
+  } catch (error) {
+    logger.error({ error }, 'Cleanup job error');
+  }
+}, 60000); // Run every 60 seconds (1 minute)
+
+// Debug endpoint to test filtering
+app.get('/debug/trips/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  
+  // Get active bookings
+  const activeBookings = await prisma.$queryRaw`
+    SELECT "seatNo" FROM "Booking" 
+    WHERE "tripId" = ${id} AND "state" != 'CANCELLED'
+  `;
+  
+  // Get all seats
+  const allSeats = await prisma.seat.findMany({
+    where: { tripId: id }
+  });
+  
+  res.json({
+    tripId: id,
+    activeBookings: activeBookings,
+    allSeats: allSeats.map(s => ({ seatNo: s.seatNo, status: s.status })),
+    activeBookedSeats: (activeBookings as any[]).map(b => b.seatNo)
+  });
 });
 
 const prisma = new PrismaClient();
@@ -186,11 +263,27 @@ app.get('/trips/:id', async (req: Request, res: Response) => {
     where: { id }, 
     include: { 
       route: true,
-      seats: true,
+      seats: true
     } 
   });
   if (!trip) return res.status(404).json({ error: 'not found' });
-  res.json(trip);
+
+  // Get active bookings (PENDING and CONFIRMED only - exclude CANCELLED and RESCHEDULED)
+  const activeBookings = await prisma.$queryRaw`
+    SELECT "seatNo" FROM "Booking" 
+    WHERE "tripId" = ${id} AND "state" IN ('PENDING', 'CONFIRMED')
+  `;
+
+  // Filter out seats that have active bookings or are HELD/SOLD
+  const activeBookedSeats = (activeBookings as any[]).map(b => b.seatNo);
+  const availableSeats = trip.seats.filter(seat => 
+    seat.status === 'AVAILABLE' && !activeBookedSeats.includes(seat.seatNo)
+  );
+
+  res.json({
+    ...trip,
+    seats: availableSeats  // Only return truly available seats
+  });
 });
 
 /**
@@ -305,6 +398,19 @@ app.post('/bookings', auth, async (req: Request, res: Response) => {
       const existing = await prisma.booking.findUnique({ where: { idempotencyKey } });
       if (existing) return res.status(200).json(existing);
     }
+    // BUSINESS LOGIC VALIDATION: Check for existing active booking on this seat
+    const existingActiveBooking = await prisma.booking.findFirst({
+      where: {
+        tripId,
+        seatNo,
+        state: { in: ['PENDING', 'CONFIRMED'] }  // Active states only
+      }
+    });
+
+    if (existingActiveBooking) {
+      return res.status(409).json({ error: 'seat already has active booking' });
+    }
+
     const holdKey = `hold:${tripId}:${seatNo}`;
     const holdOk = await redis.set(holdKey, userId, 'EX', 120, 'NX');
     if (!holdOk) return res.status(409).json({ error: 'seat temporarily held' });
@@ -351,19 +457,36 @@ app.post('/bookings', auth, async (req: Request, res: Response) => {
         appliedPrice = aiPrice;
       }
     }
-    const booking = await prisma.booking.create({ 
-      data: { 
-        tripId, 
-        userId, 
-        seatNo, 
-        priceApplied: appliedPrice, 
-        idempotencyKey: idempotencyKey || null,
-        passengerName: passengerName || null,
-        passengerEmail: passengerEmail || null,
-        passengerPhone: passengerPhone || null,
-      } 
+    
+    // Use transaction for atomic booking creation and seat update
+    const booking = await prisma.$transaction(async (tx) => {
+      const newBooking = await tx.booking.create({ 
+        data: { 
+          tripId, 
+          userId, 
+          seatNo, 
+          priceApplied: appliedPrice, 
+          idempotencyKey: idempotencyKey || null,
+          passengerName: passengerName || null,
+          passengerEmail: passengerEmail || null,
+          passengerPhone: passengerPhone || null,
+        } 
+      });
+      
+      // Set seat to HELD (not SOLD) for unpaid bookings
+      await tx.seat.updateMany({
+        where: { tripId, seatNo },
+        data: { status: 'HELD' }
+      });
+      
+      return newBooking;
     });
+    
+    // Set Redis expiry for auto-cleanup (15 minutes = 900 seconds)
+    await redis.setex(`booking:hold:${booking.id}`, 900, '1');
+    
     await redis.del(holdKey);
+    logger.info(`Created booking ${booking.id} with HELD seat ${seatNo} on trip ${tripId}`);
     return res.status(201).json(booking);
   } catch (e) {
     // release hold on failure
@@ -388,7 +511,23 @@ app.post('/bookings', auth, async (req: Request, res: Response) => {
  */
 app.post('/bookings/:id/cancel', auth, async (req: Request, res: Response) => {
   const { id } = req.params;
+  
+  // Get booking details before cancelling
+  const booking = await prisma.booking.findUnique({ where: { id } });
+  if (!booking) return res.status(404).json({ error: 'Booking not found' });
+  
+  // Cancel the booking
   const updated = await prisma.booking.update({ where: { id }, data: { state: 'CANCELLED' } });
+  
+  // Update seat status back to AVAILABLE when booking is cancelled
+  await prisma.seat.updateMany({
+    where: { 
+      tripId: booking.tripId,
+      seatNo: booking.seatNo
+    },
+    data: { status: 'AVAILABLE' }
+  });
+  
   res.json(updated);
 });
 
@@ -431,10 +570,26 @@ app.post('/bookings/:id/reschedule', auth, async (req: Request, res: Response) =
   const basePrice = Number(data.price ?? booking.priceApplied);
   const penalty = Math.round(basePrice * penaltyPct);
   try {
+    // Update booking with new trip and seat
     const updated = await prisma.booking.update({
       where: { id },
       data: { tripId: newTripId, seatNo: newSeatNo, priceApplied: basePrice + penalty, state: 'RESCHEDULED' },
     });
+    
+    // Update seat statuses: free old seat, occupy new seat
+    await Promise.all([
+      // Free the old seat
+      prisma.seat.updateMany({
+        where: { tripId: booking.tripId, seatNo: booking.seatNo },
+        data: { status: 'AVAILABLE' }
+      }),
+      // Occupy the new seat
+      prisma.seat.updateMany({
+        where: { tripId: newTripId, seatNo: newSeatNo },
+        data: { status: 'SOLD' }
+      })
+    ]);
+    
     res.json(updated);
   } catch (e) {
     return res.status(409).json({ error: 'new seat already taken' });
@@ -586,14 +741,33 @@ app.post('/bookings/:id/payment', auth, async (req: Request, res: Response) => {
   const isSuccess = !cardNumber.startsWith('0000'); // Dummy logic: 0000* = failure
   
   if (isSuccess) {
-    // Update payment and booking state
-    const updated = await prisma.booking.update({
-      where: { id },
-      data: { 
-        paymentState: 'PAID',
-        state: 'CONFIRMED' // Auto-confirm on payment
-      },
+    // Use transaction to update booking and change seat from HELD to SOLD
+    const updated = await prisma.$transaction(async (tx) => {
+      const booking = await tx.booking.update({
+        where: { id },
+        data: { 
+          paymentState: 'PAID',
+          state: 'CONFIRMED' // Auto-confirm on payment
+        },
+      });
+      
+      // Change seat from HELD to SOLD on successful payment
+      await tx.seat.updateMany({
+        where: { 
+          tripId: booking.tripId, 
+          seatNo: booking.seatNo 
+        },
+        data: { status: 'SOLD' }
+      });
+      
+      return booking;
     });
+    
+    // Remove hold timeout from Redis
+    await redis.del(`booking:hold:${id}`);
+    
+    logger.info(`Payment successful for booking ${id}, seat ${updated.seatNo} now SOLD`);
+    
     res.json({ 
       success: true, 
       message: 'payment successful',

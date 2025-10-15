@@ -155,6 +155,10 @@ const config = {
         "fromEnvVar": null,
         "value": "darwin-arm64",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "linux-musl-arm64-openssl-1.1.x"
       }
     ],
     "previewFeatures": [],
@@ -180,8 +184,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel PricingLog {\n  id        String   @id @default(cuid())\n  tripId    String\n  inputs    Json\n  price     Int\n  strategy  String\n  createdAt DateTime @default(now())\n}\n\nmodel PricingConfig {\n  id            String   @id @default(cuid())\n  loadFactorT1  Int      @default(0)\n  loadFactorT2  Int      @default(0)\n  timeBandBoost Int      @default(0)\n  updatedAt     DateTime @updatedAt\n}\n",
-  "inlineSchemaHash": "c0f5a1ae01776c197f447bdb52826f86070d018b34aa2df550762af15f628750",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"./generated/client\"\n  binaryTargets = [\"native\", \"linux-musl-arm64-openssl-1.1.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel PricingLog {\n  id        String   @id @default(cuid())\n  tripId    String\n  inputs    Json\n  price     Int\n  strategy  String\n  createdAt DateTime @default(now())\n}\n\nmodel PricingConfig {\n  id            String   @id @default(cuid())\n  loadFactorT1  Int      @default(0)\n  loadFactorT2  Int      @default(0)\n  timeBandBoost Int      @default(0)\n  updatedAt     DateTime @updatedAt\n}\n",
+  "inlineSchemaHash": "f3b5b4236895e11011f5d082e69cd1cf38b7eb982c4b617680178a423cda23d0",
   "copyEngine": true
 }
 
@@ -221,6 +225,10 @@ Object.assign(exports, Prisma)
 // file annotations for bundling tools to include these files
 path.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
 path.join(process.cwd(), "prisma/generated/client/libquery_engine-darwin-arm64.dylib.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-linux-musl-arm64-openssl-1.1.x.so.node");
+path.join(process.cwd(), "prisma/generated/client/libquery_engine-linux-musl-arm64-openssl-1.1.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "prisma/generated/client/schema.prisma")

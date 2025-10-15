@@ -63,7 +63,7 @@ function SearchContent() {
               <div className="font-medium">{new Date(trip.departure).toLocaleString()}</div>
               <div className="text-sm text-gray-600">Capacity: {trip.capacity} • Base: ₹{trip.basePrice}</div>
             </div>
-            <a href={`/trip/${trip.id}`} className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2">View & Book</a>
+            <a href={`/trip/${trip.id}`} className="btn-primary-gradient">View & Book</a>
           </div>
         ))}
       </div>

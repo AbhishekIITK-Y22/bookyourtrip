@@ -44,7 +44,7 @@ export default function ProviderProfilePage() {
       <input className="border rounded px-3 py-2" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
       <input className="border rounded px-3 py-2" placeholder="Phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
       <textarea className="border rounded px-3 py-2" placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-      <button onClick={save} disabled={saving} className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white rounded px-4 py-2 w-max">{saving ? 'Saving...' : 'Save Changes'}</button>
+      <button onClick={save} disabled={saving} className="btn-primary-gradient disabled:opacity-60 w-max">{saving ? 'Saving...' : 'Save Changes'}</button>
     </div>
   );
 }

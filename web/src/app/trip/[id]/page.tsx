@@ -40,7 +40,12 @@ export default function TripPage() {
     })();
   }, [id]);
 
-  const availableSeats = useMemo(() => (trip?.seats || []).filter(s => s.status === 'AVAILABLE'), [trip]);
+  const availableSeats = useMemo(() => {
+    if (!trip?.seats) return [];
+    // Backend already filters out seats with active bookings
+    // Just use the seats returned by the API
+    return trip.seats;
+  }, [trip]);
 
   useEffect(() => {
     if (!trip) return;
@@ -98,9 +103,9 @@ export default function TripPage() {
             <option key={s.seatNo} value={s.seatNo}>{s.seatNo}</option>
           ))}
         </select>
-        <div className="text-sm text-gray-600">Base Price: ₹{trip.basePrice} {aiPrice && (<span className="ml-2">• AI Price: <span className="font-medium">₹{aiPrice}</span></span>)}</div>
+        <div className="text-sm text-gray-600">Base Price: ₹{trip.basePrice} {aiPrice && (<span className="ml-2">• AI Price: <span className="font-medium text-[var(--color-primary)]">₹{aiPrice}</span></span>)}</div>
         {error && <div className="text-red-600 text-sm">{error}</div>}
-        <button onClick={book} disabled={!seat} className="bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white rounded px-4 py-2 max-w-xs">Book</button>
+        <button onClick={book} disabled={!seat} className="btn-primary-gradient disabled:opacity-60 max-w-xs">Book</button>
       </div>
     </div>
   );

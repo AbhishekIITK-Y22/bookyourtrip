@@ -6782,7 +6782,6 @@ export namespace Prisma {
   export type BookingWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     idempotencyKey?: string
-    tripId_seatNo?: BookingTripIdSeatNoCompoundUniqueInput
     AND?: BookingWhereInput | BookingWhereInput[]
     OR?: BookingWhereInput[]
     NOT?: BookingWhereInput | BookingWhereInput[]
@@ -6798,7 +6797,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Booking"> | Date | string
     updatedAt?: DateTimeFilter<"Booking"> | Date | string
     trip?: XOR<TripRelationFilter, TripWhereInput>
-  }, "id" | "idempotencyKey" | "tripId_seatNo">
+  }, "id" | "idempotencyKey">
 
   export type BookingOrderByWithAggregationInput = {
     id?: SortOrder
@@ -7533,11 +7532,6 @@ export namespace Prisma {
     in?: $Enums.PaymentState[] | ListEnumPaymentStateFieldRefInput<$PrismaModel>
     notIn?: $Enums.PaymentState[] | ListEnumPaymentStateFieldRefInput<$PrismaModel>
     not?: NestedEnumPaymentStateFilter<$PrismaModel> | $Enums.PaymentState
-  }
-
-  export type BookingTripIdSeatNoCompoundUniqueInput = {
-    tripId: string
-    seatNo: string
   }
 
   export type BookingCountOrderByAggregateInput = {

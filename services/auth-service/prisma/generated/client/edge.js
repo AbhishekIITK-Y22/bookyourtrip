@@ -145,6 +145,10 @@ const config = {
         "fromEnvVar": null,
         "value": "darwin-arm64",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "linux-musl-arm64-openssl-1.1.x"
       }
     ],
     "previewFeatures": [],
@@ -170,8 +174,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        String   @id @default(cuid())\n  email     String   @unique\n  phone     String?  @unique\n  password  String\n  role      Role     @default(CUSTOMER)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nenum Role {\n  CUSTOMER\n  PROVIDER\n  ADMIN\n}\n",
-  "inlineSchemaHash": "e7bd0e93cf6fd73100f6f448768f0900cce080691aab5df6fa8a17b5adf6c54d",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"./generated/client\"\n  binaryTargets = [\"native\", \"linux-musl-arm64-openssl-1.1.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        String   @id @default(cuid())\n  email     String   @unique\n  phone     String?  @unique\n  password  String\n  role      Role     @default(CUSTOMER)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nenum Role {\n  CUSTOMER\n  PROVIDER\n  ADMIN\n}\n",
+  "inlineSchemaHash": "18fe20d17bd2a6ef778198a5e5171937e5fd7b937ce8eaaf448d6297e9ff2d10",
   "copyEngine": true
 }
 config.dirname = '/'

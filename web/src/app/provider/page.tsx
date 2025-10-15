@@ -71,7 +71,7 @@ export default function ProviderDashboard() {
         <div className="rounded-xl border bg-white p-4 grid gap-2">
           <div className="font-medium">Create Provider</div>
           <input className="border rounded px-3 py-2" placeholder="Provider name" value={providerName} onChange={(e) => setProviderName(e.target.value)} />
-          <button onClick={createProvider} className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2">Create</button>
+          <button onClick={createProvider} className="btn-primary-gradient">Create</button>
         </div>
 
         <div className="rounded-xl border bg-white p-4 grid gap-2">
@@ -79,7 +79,7 @@ export default function ProviderDashboard() {
           <input className="border rounded px-3 py-2" placeholder="Provider ID" value={newRoute.providerId} onChange={(e) => setNewRoute({ ...newRoute, providerId: e.target.value })} />
           <input className="border rounded px-3 py-2" placeholder="Source" value={newRoute.source} onChange={(e) => setNewRoute({ ...newRoute, source: e.target.value })} />
           <input className="border rounded px-3 py-2" placeholder="Destination" value={newRoute.destination} onChange={(e) => setNewRoute({ ...newRoute, destination: e.target.value })} />
-          <button onClick={createRoute} className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2">Create</button>
+          <button onClick={createRoute} className="btn-primary-gradient">Create</button>
         </div>
 
         <div className="rounded-xl border bg-white p-4 grid gap-2">
@@ -88,7 +88,7 @@ export default function ProviderDashboard() {
           <input className="border rounded px-3 py-2" type="datetime-local" value={newTrip.departure} onChange={(e) => setNewTrip({ ...newTrip, departure: e.target.value })} />
           <input className="border rounded px-3 py-2" type="number" placeholder="Capacity" value={newTrip.capacity} onChange={(e) => setNewTrip({ ...newTrip, capacity: Number(e.target.value) })} />
           <input className="border rounded px-3 py-2" type="number" placeholder="Base Price" value={newTrip.basePrice} onChange={(e) => setNewTrip({ ...newTrip, basePrice: Number(e.target.value) })} />
-          <button onClick={createTrip} className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2">Create</button>
+          <button onClick={createTrip} className="btn-primary-gradient">Create</button>
         </div>
       </div>
 
