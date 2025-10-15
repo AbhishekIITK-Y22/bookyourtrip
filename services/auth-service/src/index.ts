@@ -22,6 +22,7 @@ const signupSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   role: z.enum(['CUSTOMER', 'PROVIDER']).default('CUSTOMER'),
+  companyName: z.string().optional(), // Required for PROVIDER role (validated in handler)
 });
 
 /**
@@ -50,7 +51,14 @@ app.post('/auth/signup', async (req, res) => {
     logger.warn({ errors: parsed.error.flatten() }, 'Signup validation failed');
     return res.status(400).json({ error: parsed.error.flatten() });
   }
-  const { email, password, role } = parsed.data;
+  const { email, password, role, companyName } = parsed.data;
+  
+  // Validate companyName is provided for PROVIDER role
+  if (role === 'PROVIDER' && !companyName) {
+    logger.warn({ email, role }, 'Signup validation failed: companyName required for PROVIDER');
+    return res.status(400).json({ error: { formErrors: ['Company name is required for provider accounts'] } });
+  }
+  
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
     logger.warn({ email }, 'Signup failed: email already registered');
@@ -60,6 +68,31 @@ app.post('/auth/signup', async (req, res) => {
   const user = await prisma.user.create({ data: { email, password: hashed, role } });
   const token = jwt.sign({ sub: user.id, role: user.role }, process.env.JWT_SECRET || 'dev-secret', { expiresIn: '2h' });
   logger.info({ userId: user.id, email, role }, 'User signed up successfully');
+  
+  // If PROVIDER, auto-create Provider entity in booking-service
+  if (role === 'PROVIDER' && companyName) {
+    try {
+      const bookingServiceUrl = process.env.BOOKING_SERVICE_URL || 'http://booking-service:3002';
+      const providerRes = await fetch(`${bookingServiceUrl}/providers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, name: companyName })
+      });
+      
+      if (!providerRes.ok) {
+        const errorData = await providerRes.json();
+        logger.error({ userId: user.id, companyName, error: errorData }, 'Failed to create Provider entity');
+        // Continue anyway - user is created, provider can be created later
+      } else {
+        const providerData = await providerRes.json();
+        logger.info({ userId: user.id, providerId: providerData.id, companyName }, 'Provider entity created successfully');
+      }
+    } catch (e) {
+      logger.error({ error: e, userId: user.id, companyName }, 'Error calling booking-service to create Provider');
+      // Continue anyway
+    }
+  }
+  
   res.status(201).json({ token, user: { id: user.id, email: user.email, role: user.role } });
 });
 

@@ -12,9 +12,11 @@ async function main() {
   await prisma.route.deleteMany();
   await prisma.provider.deleteMany();
 
-  // Create providers
+  // Create providers with dummy userIds (for seed data only)
+  // In production, these would be created via auth service signup
   const provider1 = await prisma.provider.create({
     data: {
+      userId: 'seed_user_express_bus',
       name: 'Express Bus Co.',
       status: 'ACTIVE',
     },
@@ -22,6 +24,7 @@ async function main() {
 
   const provider2 = await prisma.provider.create({
     data: {
+      userId: 'seed_user_fast_travel',
       name: 'Fast Travel Inc.',
       status: 'ACTIVE',
     },

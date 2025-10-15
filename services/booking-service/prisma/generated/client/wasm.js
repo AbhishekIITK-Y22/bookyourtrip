@@ -124,6 +124,7 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.ProviderScalarFieldEnum = {
   id: 'id',
+  userId: 'userId',
   name: 'name',
   email: 'email',
   phone: 'phone',
@@ -137,7 +138,9 @@ exports.Prisma.RouteScalarFieldEnum = {
   id: 'id',
   providerId: 'providerId',
   source: 'source',
-  destination: 'destination'
+  destination: 'destination',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.TripScalarFieldEnum = {
@@ -145,7 +148,9 @@ exports.Prisma.TripScalarFieldEnum = {
   routeId: 'routeId',
   departure: 'departure',
   capacity: 'capacity',
-  basePrice: 'basePrice'
+  basePrice: 'basePrice',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SeatScalarFieldEnum = {

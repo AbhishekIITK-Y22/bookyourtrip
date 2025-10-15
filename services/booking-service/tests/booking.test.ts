@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app } from '../src/index';
+import { app }  from '../src/index';
 import { PrismaClient } from '../prisma/generated/client/index.js';
 import Redis from 'ioredis';
 import jwt from 'jsonwebtoken';

@@ -215,9 +215,18 @@ function auth(req: Request, res: Response, next: NextFunction) {
  *     responses: { 201: { description: Created } }
  */
 app.post('/providers', async (req: Request, res: Response) => {
-  const { name } = req.body;
+  const { name, userId } = req.body;
   if (!name) return res.status(400).json({ error: 'name required' });
-  const provider = await prisma.provider.create({ data: { name } });
+  if (!userId) return res.status(400).json({ error: 'userId required' });
+  
+  // Check if provider already exists for this user
+  const existing = await prisma.provider.findUnique({ where: { userId } });
+  if (existing) {
+    return res.status(200).json(existing); // Idempotent - return existing
+  }
+  
+  const provider = await prisma.provider.create({ data: { name, userId } });
+  logger.info({ providerId: provider.id, userId, name }, 'Provider created successfully');
   res.status(201).json(provider);
 });
 
@@ -241,9 +250,19 @@ app.post('/routes', async (req: Request, res: Response) => {
 });
 
 // Listings for provider dashboard
-app.get('/providers', async (_req: Request, res: Response) => {
-  const providers = await prisma.provider.findMany();
-  res.json(providers);
+// Optional query param: ?userId=xxx to get provider for specific user
+app.get('/providers', async (req: Request, res: Response) => {
+  const { userId } = req.query;
+  
+  if (userId) {
+    // Get provider for specific user (single-owner model)
+    const provider = await prisma.provider.findUnique({ where: { userId: String(userId) } });
+    res.json(provider ? [provider] : []);
+  } else {
+    // Get all providers (for admin/debugging)
+    const providers = await prisma.provider.findMany();
+    res.json(providers);
+  }
 });
 
 app.get('/routes', async (_req: Request, res: Response) => {
@@ -491,6 +510,7 @@ app.post('/bookings', auth, async (req: Request, res: Response) => {
   } catch (e) {
     // release hold on failure
     try { await redis.del(`hold:${parsed.data.tripId}:${parsed.data.seatNo}`); } catch {}
+    logger.error({ error: e, tripId: parsed.data.tripId, seatNo: parsed.data.seatNo }, 'Booking creation failed');
     return res.status(409).json({ error: 'seat already taken' });
   }
 });

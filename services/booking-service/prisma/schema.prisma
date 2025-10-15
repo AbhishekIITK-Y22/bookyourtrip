@@ -11,6 +11,7 @@ datasource db {
 
 model Provider {
   id          String   @id @default(cuid())
+  userId      String   @unique  // Links to User in auth-service (one-to-one)
   name        String
   email       String?
   phone       String?
@@ -28,17 +29,21 @@ model Route {
   destination String
   trips       Trip[]
   provider    Provider @relation(fields: [providerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Trip {
-  id         String  @id @default(cuid())
+  id         String   @id @default(cuid())
   routeId    String
   departure  DateTime
   capacity   Int
   basePrice  Int
   seats      Seat[]
   bookings   Booking[]
-  route      Route   @relation(fields: [routeId], references: [id])
+  route      Route    @relation(fields: [routeId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Seat {

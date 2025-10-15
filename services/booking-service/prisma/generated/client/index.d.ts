@@ -1359,6 +1359,7 @@ export namespace Prisma {
 
   export type ProviderMinAggregateOutputType = {
     id: string | null
+    userId: string | null
     name: string | null
     email: string | null
     phone: string | null
@@ -1370,6 +1371,7 @@ export namespace Prisma {
 
   export type ProviderMaxAggregateOutputType = {
     id: string | null
+    userId: string | null
     name: string | null
     email: string | null
     phone: string | null
@@ -1381,6 +1383,7 @@ export namespace Prisma {
 
   export type ProviderCountAggregateOutputType = {
     id: number
+    userId: number
     name: number
     email: number
     phone: number
@@ -1394,6 +1397,7 @@ export namespace Prisma {
 
   export type ProviderMinAggregateInputType = {
     id?: true
+    userId?: true
     name?: true
     email?: true
     phone?: true
@@ -1405,6 +1409,7 @@ export namespace Prisma {
 
   export type ProviderMaxAggregateInputType = {
     id?: true
+    userId?: true
     name?: true
     email?: true
     phone?: true
@@ -1416,6 +1421,7 @@ export namespace Prisma {
 
   export type ProviderCountAggregateInputType = {
     id?: true
+    userId?: true
     name?: true
     email?: true
     phone?: true
@@ -1500,6 +1506,7 @@ export namespace Prisma {
 
   export type ProviderGroupByOutputType = {
     id: string
+    userId: string
     name: string
     email: string | null
     phone: string | null
@@ -1528,6 +1535,7 @@ export namespace Prisma {
 
   export type ProviderSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    userId?: boolean
     name?: boolean
     email?: boolean
     phone?: boolean
@@ -1541,6 +1549,7 @@ export namespace Prisma {
 
   export type ProviderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    userId?: boolean
     name?: boolean
     email?: boolean
     phone?: boolean
@@ -1552,6 +1561,7 @@ export namespace Prisma {
 
   export type ProviderSelectScalar = {
     id?: boolean
+    userId?: boolean
     name?: boolean
     email?: boolean
     phone?: boolean
@@ -1574,6 +1584,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      userId: string
       name: string
       email: string | null
       phone: string | null
@@ -1976,6 +1987,7 @@ export namespace Prisma {
    */ 
   interface ProviderFieldRefs {
     readonly id: FieldRef<"Provider", 'String'>
+    readonly userId: FieldRef<"Provider", 'String'>
     readonly name: FieldRef<"Provider", 'String'>
     readonly email: FieldRef<"Provider", 'String'>
     readonly phone: FieldRef<"Provider", 'String'>
@@ -2346,6 +2358,8 @@ export namespace Prisma {
     providerId: string | null
     source: string | null
     destination: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type RouteMaxAggregateOutputType = {
@@ -2353,6 +2367,8 @@ export namespace Prisma {
     providerId: string | null
     source: string | null
     destination: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type RouteCountAggregateOutputType = {
@@ -2360,6 +2376,8 @@ export namespace Prisma {
     providerId: number
     source: number
     destination: number
+    createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -2369,6 +2387,8 @@ export namespace Prisma {
     providerId?: true
     source?: true
     destination?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type RouteMaxAggregateInputType = {
@@ -2376,6 +2396,8 @@ export namespace Prisma {
     providerId?: true
     source?: true
     destination?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type RouteCountAggregateInputType = {
@@ -2383,6 +2405,8 @@ export namespace Prisma {
     providerId?: true
     source?: true
     destination?: true
+    createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -2463,6 +2487,8 @@ export namespace Prisma {
     providerId: string
     source: string
     destination: string
+    createdAt: Date
+    updatedAt: Date
     _count: RouteCountAggregateOutputType | null
     _min: RouteMinAggregateOutputType | null
     _max: RouteMaxAggregateOutputType | null
@@ -2487,6 +2513,8 @@ export namespace Prisma {
     providerId?: boolean
     source?: boolean
     destination?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     trips?: boolean | Route$tripsArgs<ExtArgs>
     provider?: boolean | ProviderDefaultArgs<ExtArgs>
     _count?: boolean | RouteCountOutputTypeDefaultArgs<ExtArgs>
@@ -2497,6 +2525,8 @@ export namespace Prisma {
     providerId?: boolean
     source?: boolean
     destination?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     provider?: boolean | ProviderDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["route"]>
 
@@ -2505,6 +2535,8 @@ export namespace Prisma {
     providerId?: boolean
     source?: boolean
     destination?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }
 
   export type RouteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2527,6 +2559,8 @@ export namespace Prisma {
       providerId: string
       source: string
       destination: string
+      createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["route"]>
     composites: {}
   }
@@ -2926,6 +2960,8 @@ export namespace Prisma {
     readonly providerId: FieldRef<"Route", 'String'>
     readonly source: FieldRef<"Route", 'String'>
     readonly destination: FieldRef<"Route", 'String'>
+    readonly createdAt: FieldRef<"Route", 'DateTime'>
+    readonly updatedAt: FieldRef<"Route", 'DateTime'>
   }
     
 
@@ -3306,6 +3342,8 @@ export namespace Prisma {
     departure: Date | null
     capacity: number | null
     basePrice: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type TripMaxAggregateOutputType = {
@@ -3314,6 +3352,8 @@ export namespace Prisma {
     departure: Date | null
     capacity: number | null
     basePrice: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type TripCountAggregateOutputType = {
@@ -3322,6 +3362,8 @@ export namespace Prisma {
     departure: number
     capacity: number
     basePrice: number
+    createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -3342,6 +3384,8 @@ export namespace Prisma {
     departure?: true
     capacity?: true
     basePrice?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type TripMaxAggregateInputType = {
@@ -3350,6 +3394,8 @@ export namespace Prisma {
     departure?: true
     capacity?: true
     basePrice?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type TripCountAggregateInputType = {
@@ -3358,6 +3404,8 @@ export namespace Prisma {
     departure?: true
     capacity?: true
     basePrice?: true
+    createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -3453,6 +3501,8 @@ export namespace Prisma {
     departure: Date
     capacity: number
     basePrice: number
+    createdAt: Date
+    updatedAt: Date
     _count: TripCountAggregateOutputType | null
     _avg: TripAvgAggregateOutputType | null
     _sum: TripSumAggregateOutputType | null
@@ -3480,6 +3530,8 @@ export namespace Prisma {
     departure?: boolean
     capacity?: boolean
     basePrice?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     seats?: boolean | Trip$seatsArgs<ExtArgs>
     bookings?: boolean | Trip$bookingsArgs<ExtArgs>
     route?: boolean | RouteDefaultArgs<ExtArgs>
@@ -3492,6 +3544,8 @@ export namespace Prisma {
     departure?: boolean
     capacity?: boolean
     basePrice?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     route?: boolean | RouteDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["trip"]>
 
@@ -3501,6 +3555,8 @@ export namespace Prisma {
     departure?: boolean
     capacity?: boolean
     basePrice?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }
 
   export type TripInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3526,6 +3582,8 @@ export namespace Prisma {
       departure: Date
       capacity: number
       basePrice: number
+      createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["trip"]>
     composites: {}
   }
@@ -3927,6 +3985,8 @@ export namespace Prisma {
     readonly departure: FieldRef<"Trip", 'DateTime'>
     readonly capacity: FieldRef<"Trip", 'Int'>
     readonly basePrice: FieldRef<"Trip", 'Int'>
+    readonly createdAt: FieldRef<"Trip", 'DateTime'>
+    readonly updatedAt: FieldRef<"Trip", 'DateTime'>
   }
     
 
@@ -6299,6 +6359,7 @@ export namespace Prisma {
 
   export const ProviderScalarFieldEnum: {
     id: 'id',
+    userId: 'userId',
     name: 'name',
     email: 'email',
     phone: 'phone',
@@ -6315,7 +6376,9 @@ export namespace Prisma {
     id: 'id',
     providerId: 'providerId',
     source: 'source',
-    destination: 'destination'
+    destination: 'destination',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type RouteScalarFieldEnum = (typeof RouteScalarFieldEnum)[keyof typeof RouteScalarFieldEnum]
@@ -6326,7 +6389,9 @@ export namespace Prisma {
     routeId: 'routeId',
     departure: 'departure',
     capacity: 'capacity',
-    basePrice: 'basePrice'
+    basePrice: 'basePrice',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type TripScalarFieldEnum = (typeof TripScalarFieldEnum)[keyof typeof TripScalarFieldEnum]
@@ -6510,6 +6575,7 @@ export namespace Prisma {
     OR?: ProviderWhereInput[]
     NOT?: ProviderWhereInput | ProviderWhereInput[]
     id?: StringFilter<"Provider"> | string
+    userId?: StringFilter<"Provider"> | string
     name?: StringFilter<"Provider"> | string
     email?: StringNullableFilter<"Provider"> | string | null
     phone?: StringNullableFilter<"Provider"> | string | null
@@ -6522,6 +6588,7 @@ export namespace Prisma {
 
   export type ProviderOrderByWithRelationInput = {
     id?: SortOrder
+    userId?: SortOrder
     name?: SortOrder
     email?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
@@ -6534,6 +6601,7 @@ export namespace Prisma {
 
   export type ProviderWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    userId?: string
     AND?: ProviderWhereInput | ProviderWhereInput[]
     OR?: ProviderWhereInput[]
     NOT?: ProviderWhereInput | ProviderWhereInput[]
@@ -6545,10 +6613,11 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Provider"> | Date | string
     updatedAt?: DateTimeFilter<"Provider"> | Date | string
     routes?: RouteListRelationFilter
-  }, "id">
+  }, "id" | "userId">
 
   export type ProviderOrderByWithAggregationInput = {
     id?: SortOrder
+    userId?: SortOrder
     name?: SortOrder
     email?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
@@ -6566,6 +6635,7 @@ export namespace Prisma {
     OR?: ProviderScalarWhereWithAggregatesInput[]
     NOT?: ProviderScalarWhereWithAggregatesInput | ProviderScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Provider"> | string
+    userId?: StringWithAggregatesFilter<"Provider"> | string
     name?: StringWithAggregatesFilter<"Provider"> | string
     email?: StringNullableWithAggregatesFilter<"Provider"> | string | null
     phone?: StringNullableWithAggregatesFilter<"Provider"> | string | null
@@ -6583,6 +6653,8 @@ export namespace Prisma {
     providerId?: StringFilter<"Route"> | string
     source?: StringFilter<"Route"> | string
     destination?: StringFilter<"Route"> | string
+    createdAt?: DateTimeFilter<"Route"> | Date | string
+    updatedAt?: DateTimeFilter<"Route"> | Date | string
     trips?: TripListRelationFilter
     provider?: XOR<ProviderRelationFilter, ProviderWhereInput>
   }
@@ -6592,6 +6664,8 @@ export namespace Prisma {
     providerId?: SortOrder
     source?: SortOrder
     destination?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     trips?: TripOrderByRelationAggregateInput
     provider?: ProviderOrderByWithRelationInput
   }
@@ -6604,6 +6678,8 @@ export namespace Prisma {
     providerId?: StringFilter<"Route"> | string
     source?: StringFilter<"Route"> | string
     destination?: StringFilter<"Route"> | string
+    createdAt?: DateTimeFilter<"Route"> | Date | string
+    updatedAt?: DateTimeFilter<"Route"> | Date | string
     trips?: TripListRelationFilter
     provider?: XOR<ProviderRelationFilter, ProviderWhereInput>
   }, "id">
@@ -6613,6 +6689,8 @@ export namespace Prisma {
     providerId?: SortOrder
     source?: SortOrder
     destination?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: RouteCountOrderByAggregateInput
     _max?: RouteMaxOrderByAggregateInput
     _min?: RouteMinOrderByAggregateInput
@@ -6626,6 +6704,8 @@ export namespace Prisma {
     providerId?: StringWithAggregatesFilter<"Route"> | string
     source?: StringWithAggregatesFilter<"Route"> | string
     destination?: StringWithAggregatesFilter<"Route"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Route"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Route"> | Date | string
   }
 
   export type TripWhereInput = {
@@ -6637,6 +6717,8 @@ export namespace Prisma {
     departure?: DateTimeFilter<"Trip"> | Date | string
     capacity?: IntFilter<"Trip"> | number
     basePrice?: IntFilter<"Trip"> | number
+    createdAt?: DateTimeFilter<"Trip"> | Date | string
+    updatedAt?: DateTimeFilter<"Trip"> | Date | string
     seats?: SeatListRelationFilter
     bookings?: BookingListRelationFilter
     route?: XOR<RouteRelationFilter, RouteWhereInput>
@@ -6648,6 +6730,8 @@ export namespace Prisma {
     departure?: SortOrder
     capacity?: SortOrder
     basePrice?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     seats?: SeatOrderByRelationAggregateInput
     bookings?: BookingOrderByRelationAggregateInput
     route?: RouteOrderByWithRelationInput
@@ -6662,6 +6746,8 @@ export namespace Prisma {
     departure?: DateTimeFilter<"Trip"> | Date | string
     capacity?: IntFilter<"Trip"> | number
     basePrice?: IntFilter<"Trip"> | number
+    createdAt?: DateTimeFilter<"Trip"> | Date | string
+    updatedAt?: DateTimeFilter<"Trip"> | Date | string
     seats?: SeatListRelationFilter
     bookings?: BookingListRelationFilter
     route?: XOR<RouteRelationFilter, RouteWhereInput>
@@ -6673,6 +6759,8 @@ export namespace Prisma {
     departure?: SortOrder
     capacity?: SortOrder
     basePrice?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: TripCountOrderByAggregateInput
     _avg?: TripAvgOrderByAggregateInput
     _max?: TripMaxOrderByAggregateInput
@@ -6689,6 +6777,8 @@ export namespace Prisma {
     departure?: DateTimeWithAggregatesFilter<"Trip"> | Date | string
     capacity?: IntWithAggregatesFilter<"Trip"> | number
     basePrice?: IntWithAggregatesFilter<"Trip"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"Trip"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Trip"> | Date | string
   }
 
   export type SeatWhereInput = {
@@ -6841,6 +6931,7 @@ export namespace Prisma {
 
   export type ProviderCreateInput = {
     id?: string
+    userId: string
     name: string
     email?: string | null
     phone?: string | null
@@ -6853,6 +6944,7 @@ export namespace Prisma {
 
   export type ProviderUncheckedCreateInput = {
     id?: string
+    userId: string
     name: string
     email?: string | null
     phone?: string | null
@@ -6865,6 +6957,7 @@ export namespace Prisma {
 
   export type ProviderUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6877,6 +6970,7 @@ export namespace Prisma {
 
   export type ProviderUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6889,6 +6983,7 @@ export namespace Prisma {
 
   export type ProviderCreateManyInput = {
     id?: string
+    userId: string
     name: string
     email?: string | null
     phone?: string | null
@@ -6900,6 +6995,7 @@ export namespace Prisma {
 
   export type ProviderUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6911,6 +7007,7 @@ export namespace Prisma {
 
   export type ProviderUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6924,6 +7021,8 @@ export namespace Prisma {
     id?: string
     source: string
     destination: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     trips?: TripCreateNestedManyWithoutRouteInput
     provider: ProviderCreateNestedOneWithoutRoutesInput
   }
@@ -6933,6 +7032,8 @@ export namespace Prisma {
     providerId: string
     source: string
     destination: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     trips?: TripUncheckedCreateNestedManyWithoutRouteInput
   }
 
@@ -6940,6 +7041,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     trips?: TripUpdateManyWithoutRouteNestedInput
     provider?: ProviderUpdateOneRequiredWithoutRoutesNestedInput
   }
@@ -6949,6 +7052,8 @@ export namespace Prisma {
     providerId?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     trips?: TripUncheckedUpdateManyWithoutRouteNestedInput
   }
 
@@ -6957,12 +7062,16 @@ export namespace Prisma {
     providerId: string
     source: string
     destination: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type RouteUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RouteUncheckedUpdateManyInput = {
@@ -6970,6 +7079,8 @@ export namespace Prisma {
     providerId?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TripCreateInput = {
@@ -6977,6 +7088,8 @@ export namespace Prisma {
     departure: Date | string
     capacity: number
     basePrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
     seats?: SeatCreateNestedManyWithoutTripInput
     bookings?: BookingCreateNestedManyWithoutTripInput
     route: RouteCreateNestedOneWithoutTripsInput
@@ -6988,6 +7101,8 @@ export namespace Prisma {
     departure: Date | string
     capacity: number
     basePrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
     seats?: SeatUncheckedCreateNestedManyWithoutTripInput
     bookings?: BookingUncheckedCreateNestedManyWithoutTripInput
   }
@@ -6997,6 +7112,8 @@ export namespace Prisma {
     departure?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     basePrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seats?: SeatUpdateManyWithoutTripNestedInput
     bookings?: BookingUpdateManyWithoutTripNestedInput
     route?: RouteUpdateOneRequiredWithoutTripsNestedInput
@@ -7008,6 +7125,8 @@ export namespace Prisma {
     departure?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     basePrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seats?: SeatUncheckedUpdateManyWithoutTripNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutTripNestedInput
   }
@@ -7018,6 +7137,8 @@ export namespace Prisma {
     departure: Date | string
     capacity: number
     basePrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type TripUpdateManyMutationInput = {
@@ -7025,6 +7146,8 @@ export namespace Prisma {
     departure?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     basePrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TripUncheckedUpdateManyInput = {
@@ -7033,6 +7156,8 @@ export namespace Prisma {
     departure?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     basePrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SeatCreateInput = {
@@ -7259,6 +7384,7 @@ export namespace Prisma {
 
   export type ProviderCountOrderByAggregateInput = {
     id?: SortOrder
+    userId?: SortOrder
     name?: SortOrder
     email?: SortOrder
     phone?: SortOrder
@@ -7270,6 +7396,7 @@ export namespace Prisma {
 
   export type ProviderMaxOrderByAggregateInput = {
     id?: SortOrder
+    userId?: SortOrder
     name?: SortOrder
     email?: SortOrder
     phone?: SortOrder
@@ -7281,6 +7408,7 @@ export namespace Prisma {
 
   export type ProviderMinOrderByAggregateInput = {
     id?: SortOrder
+    userId?: SortOrder
     name?: SortOrder
     email?: SortOrder
     phone?: SortOrder
@@ -7370,6 +7498,8 @@ export namespace Prisma {
     providerId?: SortOrder
     source?: SortOrder
     destination?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type RouteMaxOrderByAggregateInput = {
@@ -7377,6 +7507,8 @@ export namespace Prisma {
     providerId?: SortOrder
     source?: SortOrder
     destination?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type RouteMinOrderByAggregateInput = {
@@ -7384,6 +7516,8 @@ export namespace Prisma {
     providerId?: SortOrder
     source?: SortOrder
     destination?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -7428,6 +7562,8 @@ export namespace Prisma {
     departure?: SortOrder
     capacity?: SortOrder
     basePrice?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type TripAvgOrderByAggregateInput = {
@@ -7441,6 +7577,8 @@ export namespace Prisma {
     departure?: SortOrder
     capacity?: SortOrder
     basePrice?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type TripMinOrderByAggregateInput = {
@@ -7449,6 +7587,8 @@ export namespace Prisma {
     departure?: SortOrder
     capacity?: SortOrder
     basePrice?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type TripSumOrderByAggregateInput = {
@@ -8078,6 +8218,8 @@ export namespace Prisma {
     id?: string
     source: string
     destination: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     trips?: TripCreateNestedManyWithoutRouteInput
   }
 
@@ -8085,6 +8227,8 @@ export namespace Prisma {
     id?: string
     source: string
     destination: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     trips?: TripUncheckedCreateNestedManyWithoutRouteInput
   }
 
@@ -8122,6 +8266,8 @@ export namespace Prisma {
     providerId?: StringFilter<"Route"> | string
     source?: StringFilter<"Route"> | string
     destination?: StringFilter<"Route"> | string
+    createdAt?: DateTimeFilter<"Route"> | Date | string
+    updatedAt?: DateTimeFilter<"Route"> | Date | string
   }
 
   export type TripCreateWithoutRouteInput = {
@@ -8129,6 +8275,8 @@ export namespace Prisma {
     departure: Date | string
     capacity: number
     basePrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
     seats?: SeatCreateNestedManyWithoutTripInput
     bookings?: BookingCreateNestedManyWithoutTripInput
   }
@@ -8138,6 +8286,8 @@ export namespace Prisma {
     departure: Date | string
     capacity: number
     basePrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
     seats?: SeatUncheckedCreateNestedManyWithoutTripInput
     bookings?: BookingUncheckedCreateNestedManyWithoutTripInput
   }
@@ -8154,6 +8304,7 @@ export namespace Prisma {
 
   export type ProviderCreateWithoutRoutesInput = {
     id?: string
+    userId: string
     name: string
     email?: string | null
     phone?: string | null
@@ -8165,6 +8316,7 @@ export namespace Prisma {
 
   export type ProviderUncheckedCreateWithoutRoutesInput = {
     id?: string
+    userId: string
     name: string
     email?: string | null
     phone?: string | null
@@ -8204,6 +8356,8 @@ export namespace Prisma {
     departure?: DateTimeFilter<"Trip"> | Date | string
     capacity?: IntFilter<"Trip"> | number
     basePrice?: IntFilter<"Trip"> | number
+    createdAt?: DateTimeFilter<"Trip"> | Date | string
+    updatedAt?: DateTimeFilter<"Trip"> | Date | string
   }
 
   export type ProviderUpsertWithoutRoutesInput = {
@@ -8219,6 +8373,7 @@ export namespace Prisma {
 
   export type ProviderUpdateWithoutRoutesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8230,6 +8385,7 @@ export namespace Prisma {
 
   export type ProviderUncheckedUpdateWithoutRoutesInput = {
     id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8305,6 +8461,8 @@ export namespace Prisma {
     id?: string
     source: string
     destination: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     provider: ProviderCreateNestedOneWithoutRoutesInput
   }
 
@@ -8313,6 +8471,8 @@ export namespace Prisma {
     providerId: string
     source: string
     destination: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type RouteCreateOrConnectWithoutTripsInput = {
@@ -8396,6 +8556,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     provider?: ProviderUpdateOneRequiredWithoutRoutesNestedInput
   }
 
@@ -8404,6 +8566,8 @@ export namespace Prisma {
     providerId?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TripCreateWithoutSeatsInput = {
@@ -8411,6 +8575,8 @@ export namespace Prisma {
     departure: Date | string
     capacity: number
     basePrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
     bookings?: BookingCreateNestedManyWithoutTripInput
     route: RouteCreateNestedOneWithoutTripsInput
   }
@@ -8421,6 +8587,8 @@ export namespace Prisma {
     departure: Date | string
     capacity: number
     basePrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
     bookings?: BookingUncheckedCreateNestedManyWithoutTripInput
   }
 
@@ -8445,6 +8613,8 @@ export namespace Prisma {
     departure?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     basePrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookings?: BookingUpdateManyWithoutTripNestedInput
     route?: RouteUpdateOneRequiredWithoutTripsNestedInput
   }
@@ -8455,6 +8625,8 @@ export namespace Prisma {
     departure?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     basePrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookings?: BookingUncheckedUpdateManyWithoutTripNestedInput
   }
 
@@ -8463,6 +8635,8 @@ export namespace Prisma {
     departure: Date | string
     capacity: number
     basePrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
     seats?: SeatCreateNestedManyWithoutTripInput
     route: RouteCreateNestedOneWithoutTripsInput
   }
@@ -8473,6 +8647,8 @@ export namespace Prisma {
     departure: Date | string
     capacity: number
     basePrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
     seats?: SeatUncheckedCreateNestedManyWithoutTripInput
   }
 
@@ -8497,6 +8673,8 @@ export namespace Prisma {
     departure?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     basePrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seats?: SeatUpdateManyWithoutTripNestedInput
     route?: RouteUpdateOneRequiredWithoutTripsNestedInput
   }
@@ -8507,6 +8685,8 @@ export namespace Prisma {
     departure?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     basePrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seats?: SeatUncheckedUpdateManyWithoutTripNestedInput
   }
 
@@ -8514,12 +8694,16 @@ export namespace Prisma {
     id?: string
     source: string
     destination: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type RouteUpdateWithoutProviderInput = {
     id?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     trips?: TripUpdateManyWithoutRouteNestedInput
   }
 
@@ -8527,6 +8711,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     trips?: TripUncheckedUpdateManyWithoutRouteNestedInput
   }
 
@@ -8534,6 +8720,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     destination?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TripCreateManyRouteInput = {
@@ -8541,6 +8729,8 @@ export namespace Prisma {
     departure: Date | string
     capacity: number
     basePrice: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type TripUpdateWithoutRouteInput = {
@@ -8548,6 +8738,8 @@ export namespace Prisma {
     departure?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     basePrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seats?: SeatUpdateManyWithoutTripNestedInput
     bookings?: BookingUpdateManyWithoutTripNestedInput
   }
@@ -8557,6 +8749,8 @@ export namespace Prisma {
     departure?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     basePrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seats?: SeatUncheckedUpdateManyWithoutTripNestedInput
     bookings?: BookingUncheckedUpdateManyWithoutTripNestedInput
   }
@@ -8566,6 +8760,8 @@ export namespace Prisma {
     departure?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     basePrice?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SeatCreateManyTripInput = {
