@@ -449,9 +449,7 @@ DATABASE_URL="postgresql://booking_user:booking_password@localhost:5434/booking_
 
 ---
 
-## 👥 Team
 
-- **Abhishek** - Software Engineer, IITK Y22
 
 ## 📄 License
 
@@ -461,7 +459,7 @@ This project is created for academic purposes as part of CS455 Software Engineer
 
 ## 🙏 Acknowledgments
 
-- CS455 Course Staff
+- CS455 Course 
 - Prisma ORM Documentation
 - Express.js Community
 - OpenAPI/Swagger Tools
