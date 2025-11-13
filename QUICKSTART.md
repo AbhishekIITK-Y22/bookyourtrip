@@ -2,10 +2,11 @@
 
 ## ✅ All Services Running
 
-Services are now running on Docker:
+Services are now running locally:
 - **Auth Service**: `http://localhost:3001`
 - **Booking Service**: `http://localhost:3002`
 - **AI Service**: `http://localhost:3003`
+- **Web App**: `http://localhost:3000`
 
 ## 🧪 Test the APIs
 
@@ -61,44 +62,84 @@ The booking database has sample data:
 
 ## 🔧 Development Commands
 
-### Start Services
+### Start All Services
 ```bash
 cd /Users/abhishek/Desktop/CS455/bookyourtrip
-docker compose up -d
+./scripts/start-local.sh
 ```
 
-### Stop Services
+### Stop All Services
 ```bash
-docker compose down
+./scripts/stop-local.sh
+```
+
+### Start Services Manually
+
+```bash
+# Terminal 1: Auth Service
+cd services/auth-service
+npm run dev
+
+# Terminal 2: Booking Service
+cd services/booking-service
+npm run dev
+
+# Terminal 3: AI Service
+cd services/ai-service
+npm run dev
+
+# Terminal 4: Web App
+cd web
+npm run dev
 ```
 
 ### View Logs
 ```bash
-docker compose logs -f auth-service
-docker compose logs -f booking-service
-```
-
-### Rebuild After Code Changes
-```bash
-docker compose build auth-service booking-service
-docker compose up -d
+# If using start-local.sh, logs are in the logs/ directory
+tail -f logs/auth-service.log
+tail -f logs/booking-service.log
+tail -f logs/ai-service.log
+tail -f logs/web-app.log
 ```
 
 ### Run Tests
 ```bash
 cd services/auth-service
-NODE_ENV=test DATABASE_URL="postgres://auth_user:auth_password@localhost:5433/auth_db" npm test
+npm test
+
+cd ../booking-service
+npm test
+
+cd ../ai-service
+npm test
+```
+
+### Setup (First Time)
+```bash
+# Setup databases
+./scripts/setup-local-databases.sh
+
+# Create .env files
+./scripts/create-env-files.sh
+
+# Run migrations
+cd services/auth-service && npx prisma migrate deploy && cd ../..
+cd services/booking-service && npx prisma migrate deploy && cd ../..
+cd services/ai-service && npx prisma migrate deploy && cd ../..
+
+# Seed database (optional)
+cd services/booking-service && npm run seed && cd ../..
 ```
 
 ## 📝 Complete API Documentation
 
 See `API_ENDPOINTS.md` for all available endpoints.
 
-##issues Resolved
+## Issues Resolved
 
 1. ✅ **Swagger Removed**: Was breaking tests, only 1 endpoint working
 2. ✅ **TypeScript Build Fixed**: `rootDir: "src"` with correct Prisma import paths
-3. ✅ **Docker Path Fixed**: Commands updated to use `dist/index.js`
+3. ✅ **Local Setup**: All services can run locally without Docker
 4. ✅ **Tests Pass**: 9/9 auth tests passing
 5. ✅ **Database Seeded**: Sample data loaded
 6. ✅ **All Services Running**: Auth, Booking, AI services operational

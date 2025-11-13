@@ -29,22 +29,16 @@ export default async function RootLayout({
   const token = cookieStore.get('token')?.value;
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}>
-        <div className="min-h-screen flex flex-col">
-          <header className="sticky top-0 z-10 border-b bg-white/80 backdrop-blur">
-            <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded bg-blue-600 text-white grid place-items-center font-bold">B</div>
-                <span className="font-semibold">BookYourTrip</span>
-              </div>
-              <NavClient />
-            </div>
-          </header>
-          <main className="flex-1 mx-auto max-w-6xl w-full px-4 py-8">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <div className="min-h-screen bg-white">
+          <NavClient />
+          <main className="flex-1">
             {children}
           </main>
-          <footer className="border-t bg-white/80">
-            <div className="mx-auto max-w-6xl px-4 py-4 text-xs text-gray-500">© {new Date().getFullYear()} BookYourTrip</div>
+          <footer className="border-t bg-white">
+            <div className="container mx-auto px-4 py-8 text-center text-gray-600">
+              <p>&copy; {new Date().getFullYear()} BookYourTrip. All rights reserved.</p>
+            </div>
           </footer>
         </div>
       </body>

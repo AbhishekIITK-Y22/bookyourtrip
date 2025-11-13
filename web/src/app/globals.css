@@ -1,35 +1,22 @@
 @import "tailwindcss";
 
+/* Custom CSS variables for the design system */
 :root {
+  --primary-blue: #3b82f6;
+  --primary-blue-dark: #1d4ed8;
+  --accent-cyan: #06b6d4;
+  --accent-cyan-dark: #0891b2;
   --background: #ffffff;
-  --foreground: #1f1926;
-  --color-primary: #751AEA;
-  --color-secondary: #420F84;
-  --color-accent: #FF7F50;
-  --surface-100: #ffffff;
-  --surface-200: #F7F7F7;
-  --surface-300: #DDDDDD;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--color-primary);
-  --color-secondary: var(--color-secondary);
-  --color-accent: var(--color-accent);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #0f172a;
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --card: #ffffff;
+  --destructive: #ef4444;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
@@ -38,13 +25,4 @@ body {
 h1, h2, h3, h4, h5, h6 {
   line-height: 1.2;
   letter-spacing: -0.02em;
-}
-
-/* Gradient primary button utility */
-.btn-primary-gradient {
-  @apply text-white rounded px-4 py-2; 
-  background-image: linear-gradient(to bottom right, var(--color-primary), var(--color-secondary));
-}
-.btn-primary-gradient:hover {
-  background-image: linear-gradient(to bottom right, rgba(11,200,255,0.2), rgba(66,15,132,0.2));
 }

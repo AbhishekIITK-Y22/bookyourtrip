@@ -93,7 +93,7 @@ app.get('/debug/trips/:id', async (req: Request, res: Response) => {
 });
 
 const prisma = new PrismaClient();
-const redis = new Redis(process.env.REDIS_URL || 'redis://redis:6379');
+const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
 
 // Auth middleware
 function auth(req: Request, res: Response, next: NextFunction) {
@@ -270,11 +270,53 @@ app.get('/routes', async (_req: Request, res: Response) => {
   res.json(routes);
 });
 
-app.get('/trips', async (_req: Request, res: Response) => {
-  const trips = await prisma.trip.findMany({ include: { route: true } });
+app.get('/trips', async (req: Request, res: Response) => {
+  const { providerId } = req.query as { providerId?: string };
+  const where: any = {};
+  if (providerId) {
+    where.route = { providerId: String(providerId) };
+  }
+  const trips = await prisma.trip.findMany({ where, include: { route: true } });
   res.json(trips);
 });
 
+// List bookings for a given provider (with optional filters)
+app.get('/providers/:id/bookings', auth, async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { tripId, state } = req.query as { tripId?: string; state?: string };
+  const where: any = {
+    trip: {
+      route: { providerId: id }
+    }
+  };
+  if (tripId) where.tripId = String(tripId);
+  if (state) where.state = String(state);
+  
+  const bookings = await prisma.booking.findMany({
+    where,
+    orderBy: { createdAt: 'desc' },
+    include: { trip: { include: { route: true } } }
+  });
+  res.json(bookings);
+});
+
+// Provider stats: total bookings and revenue (paid & confirmed)
+app.get('/providers/:id/stats', auth, async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const bookings = await prisma.booking.findMany({
+    where: {
+      trip: { route: { providerId: id } }
+    },
+    select: { state: true, paymentState: true, priceApplied: true }
+  });
+  const totalBookings = bookings.length;
+  const revenue = bookings.reduce((sum, b) => {
+    const isPaid = b.paymentState === 'PAID';
+    const isConfirmed = b.state === 'CONFIRMED';
+    return isPaid && isConfirmed ? sum + (b.priceApplied || 0) : sum;
+  }, 0);
+  res.json({ totalBookings, revenue });
+});
 // Get a single trip with seats and route
 app.get('/trips/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -440,7 +482,7 @@ app.post('/bookings', auth, async (req: Request, res: Response) => {
       // Try AI service first; if unavailable, fall back to trip basePrice
       let aiPrice: number | null = null;
       try {
-        const aiUrl = process.env.AI_SERVICE_URL || 'http://ai-service:3003';
+        const aiUrl = process.env.AI_SERVICE_URL || 'http://localhost:3003';
         
         // Get trip details for AI agent (capacity, availability, base price)
         const tripWithSeats = await prisma.trip.findUnique({
@@ -584,7 +626,7 @@ app.post('/bookings/:id/reschedule', auth, async (req: Request, res: Response) =
   if (!originalTrip) return res.status(400).json({ error: 'original trip missing' });
   const hoursToDeparture = (new Date(originalTrip.departure).getTime() - Date.now()) / 36e5;
   const penaltyPct = hoursToDeparture < 24 ? 0.2 : 0;
-  const aiUrl = process.env.AI_SERVICE_URL || 'http://ai-service:3003';
+  const aiUrl = process.env.AI_SERVICE_URL || 'http://localhost:3003';
   const resp = await fetch(`${aiUrl}/pricing/${encodeURIComponent(newTripId)}`);
   const data = await resp.json();
   const basePrice = Number(data.price ?? booking.priceApplied);

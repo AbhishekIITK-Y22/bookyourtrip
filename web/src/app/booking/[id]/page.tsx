@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { BOOKING_URL } from "@/lib/api";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { Calendar, MapPin, Clock, CreditCard, User, AlertCircle, CheckCircle, XCircle, Loader2 } from "lucide-react";
 
 type Trip = {
   id: string;
@@ -38,6 +39,9 @@ export default function BookingPage() {
   const [passenger, setPassenger] = useState({ name: '', email: '', phone: '' });
   const [showPassengerForm, setShowPassengerForm] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showDateChangeModal, setShowDateChangeModal] = useState(false);
+  const [newDepartureDate, setNewDepartureDate] = useState('');
+  const [changingDate, setChangingDate] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -164,8 +168,78 @@ export default function BookingPage() {
     }
   }
 
-  if (loading) return <div className="max-w-4xl mx-auto p-6"><div className="text-center">Loading...</div></div>;
-  if (!data) return <div className="max-w-4xl mx-auto p-6"><div className="text-gray-600">Booking not found</div></div>;
+  async function changeDate() {
+    if (!newDepartureDate) {
+      alert('Please select a new departure date');
+      return;
+    }
+
+    const originalDate = new Date(data?.trip?.departure || '');
+    const newDate = new Date(newDepartureDate);
+    const daysDifference = Math.ceil((newDate.getTime() - originalDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    // Calculate penalty based on how close to departure
+    let penalty = 0;
+    if (daysDifference < 0) { // Moving to earlier date
+      penalty = Math.abs(daysDifference) * 50; // ₹50 per day penalty for moving earlier
+    } else if (daysDifference > 0) { // Moving to later date
+      penalty = daysDifference * 100; // ₹100 per day penalty for moving later
+    }
+
+    if (daysDifference < -7 || daysDifference > 7) {
+      alert('Date changes are only allowed within 7 days of original departure date');
+      return;
+    }
+
+    try {
+      setChangingDate(true);
+      setError(null);
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${BOOKING_URL}/bookings/${params.id}/change-date`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ 
+          newDepartureDate,
+          penalty 
+        })
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result?.error || 'Date change failed');
+      setData(result);
+      setShowDateChangeModal(false);
+      alert(`Date changed successfully! ${penalty > 0 ? `Penalty of ₹${penalty} has been applied.` : 'No penalty applied.'}`);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Date change failed';
+      setError(msg);
+    } finally {
+      setChangingDate(false);
+    }
+  }
+
+  if (loading) return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center">
+        <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+        <p className="text-gray-600">Loading booking details...</p>
+      </div>
+    </div>
+  );
+  
+  if (!data) return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center">
+        <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">Booking Not Found</h2>
+        <p className="text-gray-600 mb-6">The booking you're looking for doesn't exist or you don't have access to it.</p>
+        <Link href="/bookings" className="inline-block bg-blue-600 text-white rounded-lg px-6 py-3 hover:bg-blue-700 transition-colors">
+          Back to My Bookings
+        </Link>
+      </div>
+    </div>
+  );
 
   // At this point, data is guaranteed to be non-null
   // Determine if booking is active (can be acted upon)
@@ -384,20 +458,36 @@ export default function BookingPage() {
               </div>
             )}
             {canCancel && (
-              <div className="p-4 border border-gray-200 rounded-lg">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-semibold text-gray-900">Cancel Booking</div>
-                    <div className="text-sm text-gray-600">Refund will be processed within 5-7 business days</div>
+              <>
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-gray-900">Change Date</div>
+                      <div className="text-sm text-gray-600">Modify your departure date (penalties may apply)</div>
+                    </div>
+                    <button 
+                      onClick={() => setShowDateChangeModal(true)} 
+                      className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 py-2 font-medium"
+                    >
+                      Change Date
+                    </button>
                   </div>
-                  <button 
-                    onClick={() => setShowCancelModal(true)} 
-                    className="bg-red-600 hover:bg-red-700 text-white rounded-lg px-6 py-2 font-medium"
-                  >
-                    Cancel Booking
-                  </button>
                 </div>
-              </div>
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-semibold text-gray-900">Cancel Booking</div>
+                      <div className="text-sm text-gray-600">Refund will be processed within 5-7 business days</div>
+                    </div>
+                    <button 
+                      onClick={() => setShowCancelModal(true)} 
+                      className="bg-red-600 hover:bg-red-700 text-white rounded-lg px-6 py-2 font-medium"
+                    >
+                      Cancel Booking
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -413,6 +503,51 @@ export default function BookingPage() {
             <Link href="/search" className="inline-block bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 py-3 font-medium">
               Search for New Trips
             </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Date Change Modal */}
+      {showDateChangeModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-md mx-4">
+            <h3 className="text-xl font-bold mb-4">Change Departure Date</h3>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Current Date</label>
+              <p className="text-gray-600">{departureDate ? departureDate.toLocaleString() : 'N/A'}</p>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">New Date</label>
+              <input
+                type="datetime-local"
+                value={newDepartureDate}
+                onChange={(e) => setNewDepartureDate(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div className="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm text-yellow-800">
+                <strong>Penalty Policy:</strong><br/>
+                • Moving earlier: ₹50 per day<br/>
+                • Moving later: ₹100 per day<br/>
+                • Changes only allowed within 7 days
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button 
+                onClick={changeDate} 
+                disabled={changingDate || !newDepartureDate} 
+                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white rounded-lg px-4 py-2 font-medium"
+              >
+                {changingDate ? 'Changing...' : 'Change Date'}
+              </button>
+              <button 
+                onClick={() => setShowDateChangeModal(false)} 
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg px-4 py-2 font-medium"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}

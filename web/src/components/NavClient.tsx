@@ -1,11 +1,11 @@
 "use client";
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Navbar } from "./Navbar";
 
-function decodeRole(token: string): string | null {
+function decodeToken(token: string): { role?: string; email?: string } | null {
   try {
     const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-    return payload?.role ?? null;
+    return payload;
   } catch {
     return null;
   }
@@ -13,27 +13,26 @@ function decodeRole(token: string): string | null {
 
 export default function NavClient() {
   const [token, setToken] = useState<string | null>(null);
-  const [role, setRole] = useState<string | null>(null);
+  const [user, setUser] = useState<{ role?: string; email?: string } | null>(null);
 
   useEffect(() => {
     const t = localStorage.getItem('token');
     setToken(t);
-    setRole(t ? decodeRole(t) : null);
+    setUser(t ? decodeToken(t) : null);
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setUser(null);
+  };
+
   return (
-    <nav className="text-sm text-gray-600 flex gap-4">
-      <Link href="/" className="hover:text-blue-600">Search</Link>
-      <Link href="/bookings" className="hover:text-blue-600">My Bookings</Link>
-      {role === 'PROVIDER' && (
-        <Link href="/provider" className="hover:text-blue-600">Provider</Link>
-      )}
-      {token ? (
-        <Link href="/logout" className="hover:text-blue-600">Logout</Link>
-      ) : (
-        <Link href="/login" className="hover:text-blue-600">Login</Link>
-      )}
-    </nav>
+    <Navbar 
+      isAuthenticated={!!token}
+      user={user}
+      onLogout={handleLogout}
+    />
   );
 }
 

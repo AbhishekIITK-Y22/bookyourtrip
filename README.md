@@ -124,58 +124,71 @@ A microservices-based ticket booking platform for transportation services, built
 
 ### Prerequisites
 
-- **Docker** and **Docker Compose** installed
-- **Node.js 20+** (for local development)
+- **Node.js 20+**
+- **PostgreSQL 15+**
+- **Redis 7+**
+- **NATS Server** (optional)
 - **npm** or **yarn**
 
-### Quick Start with Docker
+### Quick Start (Local Development)
+
+**See [LOCAL_SETUP.md](./LOCAL_SETUP.md) for detailed setup instructions.**
 
 ```bash
 # Clone the repository
 git clone https://github.com/AbhishekIITK-Y22/bookyourtrip.git
 cd bookyourtrip
 
+# Install dependencies
+npm install
+cd services/auth-service && npm install && cd ../..
+cd services/booking-service && npm install && cd ../..
+cd services/ai-service && npm install && cd ../..
+cd web && npm install && cd ..
+
+# Setup databases
+./scripts/setup-local-databases.sh
+
+# Create .env files
+./scripts/create-env-files.sh
+
+# Run database migrations
+cd services/auth-service && npx prisma migrate deploy && cd ../..
+cd services/booking-service && npx prisma migrate deploy && cd ../..
+cd services/ai-service && npx prisma migrate deploy && cd ../..
+
+# (Optional) Seed database with test data
+cd services/booking-service && npm run seed && cd ../..
+
 # Start all services
-docker compose up -d
-
-# Check service status
-docker compose ps
-
-# View logs
-docker compose logs -f
+./scripts/start-local.sh
 ```
 
 Services will be available at:
-- Auth Service: http://localhost:3001
-- Booking Service: http://localhost:3002
-- AI Service: http://localhost:3003
+- **Auth Service**: http://localhost:3001
+- **Booking Service**: http://localhost:3002
+- **AI Service**: http://localhost:3003
+- **Web App**: http://localhost:3000
 
-### Local Development
+### Manual Service Startup
+
+If you prefer to start services manually:
 
 ```bash
-# Install dependencies (from root)
-npm install
-
-# Start infrastructure (databases, Redis, NATS)
-docker compose up -d auth-db booking-db ai-db redis nats
-
-# Run auth service
+# Terminal 1: Auth Service
 cd services/auth-service
-npm install
-npx prisma migrate deploy
 npm run dev
 
-# Run booking service (in another terminal)
+# Terminal 2: Booking Service
 cd services/booking-service
-npm install
-npx prisma migrate deploy
-npm run seed  # Optional: populate with test data
 npm run dev
 
-# Run AI service (in another terminal)
+# Terminal 3: AI Service
 cd services/ai-service
-npm install
-npx prisma migrate deploy
+npm run dev
+
+# Terminal 4: Web App
+cd web
 npm run dev
 ```
 
@@ -393,16 +406,17 @@ bookyourtrip/
 ### Auth Service
 ```env
 PORT=3001
-DATABASE_URL=postgresql://auth_user:auth_password@localhost:5433/auth_db
+DATABASE_URL=postgresql://auth_user:auth_password@localhost:5432/auth_db
 JWT_SECRET=your-secret-key
 REDIS_URL=redis://localhost:6379
 NATS_URL=nats://localhost:4222
+BOOKING_SERVICE_URL=http://localhost:3002
 ```
 
 ### Booking Service
 ```env
 PORT=3002
-DATABASE_URL=postgresql://booking_user:booking_password@localhost:5434/booking_db
+DATABASE_URL=postgresql://booking_user:booking_password@localhost:5432/booking_db
 JWT_SECRET=your-secret-key
 REDIS_URL=redis://localhost:6379
 NATS_URL=nats://localhost:4222
@@ -412,7 +426,7 @@ AI_SERVICE_URL=http://localhost:3003
 ### AI Service
 ```env
 PORT=3003
-DATABASE_URL=postgresql://ai_user:ai_password@localhost:5435/ai_db
+DATABASE_URL=postgresql://ai_user:ai_password@localhost:5432/ai_db
 NATS_URL=nats://localhost:4222
 ```
 
@@ -423,11 +437,37 @@ NATS_URL=nats://localhost:4222
 ### Services won't start
 ```bash
 # Check if ports are already in use
-lsof -i :3001 -i :3002 -i :3003
+lsof -i :3001 -i :3002 -i :3003 -i :3000
 
-# Restart Docker Compose
-docker compose down
-docker compose up -d
+# Kill processes using the ports
+kill -9 <PID>
+
+# Or use the stop script
+./scripts/stop-local.sh
+```
+
+### PostgreSQL not running
+```bash
+# macOS
+brew services start postgresql@15
+
+# Linux
+sudo systemctl start postgresql
+
+# Check status
+pg_isready
+```
+
+### Redis not running
+```bash
+# macOS
+brew services start redis
+
+# Linux
+sudo systemctl start redis
+
+# Check status
+redis-cli ping  # Should return PONG
 ```
 
 ### Database migration issues
@@ -435,16 +475,36 @@ docker compose up -d
 cd services/auth-service
 npx prisma migrate reset  # Warning: This will delete all data!
 npx prisma migrate deploy
+
+# Repeat for other services
+cd ../booking-service
+npx prisma migrate deploy
+
+cd ../ai-service
+npx prisma migrate deploy
 ```
 
 ### Tests failing
 ```bash
-# Ensure infrastructure is running
-docker compose up -d auth-db booking-db ai-db redis
+# Ensure PostgreSQL and Redis are running
+pg_isready
+redis-cli ping
 
 # Run tests with proper DATABASE_URL
 cd services/booking-service
-DATABASE_URL="postgresql://booking_user:booking_password@localhost:5434/booking_db" npm test
+DATABASE_URL="postgresql://booking_user:booking_password@localhost:5432/booking_db" npm test
+```
+
+### Environment variables not loading
+```bash
+# Make sure .env files exist in each service directory
+ls services/auth-service/.env
+ls services/booking-service/.env
+ls services/ai-service/.env
+ls web/.env.local
+
+# Or recreate them
+./scripts/create-env-files.sh
 ```
 
 ---
